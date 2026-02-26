@@ -1,117 +1,318 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../app/providers.dart';
 import '../../app/theme.dart';
 
 class CropSelectionScreen extends ConsumerStatefulWidget {
   const CropSelectionScreen({super.key});
 
   @override
-  ConsumerState<CropSelectionScreen> createState() => _CropSelectionScreenState();
+  ConsumerState<CropSelectionScreen> createState() =>
+      _CropSelectionScreenState();
 }
 
-class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen> {
+class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
+    with SingleTickerProviderStateMixin {
   final Set<String> _selected = {};
+  List<Map<String, dynamic>> _allCrops = [];
+  List<String> _categories = [];
+  late TabController _tabController;
+  bool _loading = true;
 
-  final List<Map<String, String>> _crops = const [
-    {'id': 'wheat', 'name': 'Wheat', 'icon': '🌾'},
-    {'id': 'rice', 'name': 'Rice', 'icon': '🍚'},
-    {'id': 'tomato', 'name': 'Tomato', 'icon': '🍅'},
-    {'id': 'onion', 'name': 'Onion', 'icon': '🧅'},
-    {'id': 'potato', 'name': 'Potato', 'icon': '🥔'},
-    {'id': 'cotton', 'name': 'Cotton', 'icon': '🏵️'},
-    {'id': 'sugarcane', 'name': 'Sugarcane', 'icon': '🎋'},
-    {'id': 'soybean', 'name': 'Soybean', 'icon': '🫘'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 0, vsync: this);
+    _loadCrops();
+  }
+
+  Future<void> _loadCrops() async {
+    final api = ref.read(apiServiceProvider);
+    final result = await api.getCrops();
+
+    if (result.success && result.data != null) {
+      final crops = List<Map<String, dynamic>>.from(result.data!['crops']);
+      final cats = crops
+          .map((c) => c['category'] as String)
+          .toSet()
+          .toList();
+
+      setState(() {
+        _allCrops = crops;
+        _categories = cats;
+        _tabController = TabController(length: cats.length, vsync: this);
+        _loading = false;
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> _cropsForCategory(String category) {
+    return _allCrops.where((c) => c['category'] == category).toList();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+            child: CircularProgressIndicator(
+                color: AgriChainTheme.primaryGreen)),
+      );
+    }
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              const Text('Select Your Crops',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              const Text('Choose the crops you grow',
-                  style: TextStyle(fontSize: 16, color: AgriChainTheme.greyText)),
-              const SizedBox(height: 24),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1.4,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Header ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new,
+                        color: AgriChainTheme.darkText),
+                    onPressed: () => context.go('/personal-info'),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
-                  itemCount: _crops.length,
-                  itemBuilder: (context, i) {
-                    final crop = _crops[i];
-                    final isSelected = _selected.contains(crop['id']);
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selected.remove(crop['id']);
-                          } else {
-                            _selected.add(crop['id']!);
-                          }
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AgriChainTheme.primaryGreen.withValues(alpha: 0.1)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
+                  const SizedBox(height: 12),
+                  const Text(
+                    'What Do You Grow?',
+                    style:
+                        TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'आप क्या उगाते हैं?',
+                    style: TextStyle(
+                        fontSize: 18, color: AgriChainTheme.greyText),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // ── Category tabs ──
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color: Colors.grey.shade200, width: 1),
+                ),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                labelColor: AgriChainTheme.primaryGreen,
+                unselectedLabelColor: AgriChainTheme.greyText,
+                labelStyle: const TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.w600),
+                unselectedLabelStyle: const TextStyle(fontSize: 15),
+                indicatorColor: AgriChainTheme.primaryGreen,
+                indicatorWeight: 3,
+                tabAlignment: TabAlignment.start,
+                tabs: _categories.map((c) => Tab(text: c)).toList(),
+              ),
+            ),
+
+            // ── Crop grid ──
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: _categories.map((category) {
+                  final crops = _cropsForCategory(category);
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.85,
+                    ),
+                    itemCount: crops.length,
+                    itemBuilder: (context, i) {
+                      final crop = crops[i];
+                      final id = crop['id'] as String;
+                      final isSelected = _selected.contains(id);
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              _selected.remove(id);
+                            } else {
+                              _selected.add(id);
+                            }
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
                             color: isSelected
                                 ? AgriChainTheme.primaryGreen
-                                : Colors.grey.shade300,
-                            width: isSelected ? 2 : 1,
+                                    .withValues(alpha: 0.08)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AgriChainTheme.primaryGreen
+                                  : Colors.grey.shade300,
+                              width: isSelected ? 2.5 : 1,
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      crop['icon'] ?? '🌱',
+                                      style:
+                                          const TextStyle(fontSize: 32),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      crop['name_hi'] ?? crop['name'],
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                        color: isSelected
+                                            ? AgriChainTheme.primaryGreen
+                                            : AgriChainTheme.darkText,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      crop['name'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: AgriChainTheme.greyText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Positioned(
+                                  top: 6,
+                                  right: 6,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: AgriChainTheme.primaryGreen,
+                                    size: 20,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(crop['icon']!,
-                                style: const TextStyle(fontSize: 32)),
-                            const SizedBox(height: 8),
-                            Text(crop['name']!,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight:
-                                      isSelected ? FontWeight.w600 : FontWeight.w400,
-                                  color: isSelected
-                                      ? AgriChainTheme.primaryGreen
-                                      : AgriChainTheme.darkText,
-                                )),
-                          ],
+                      )
+                          .animate()
+                          .fadeIn(
+                            delay: Duration(milliseconds: 50 * i),
+                            duration: 250.ms,
+                          )
+                          .scale(
+                            begin: const Offset(0.9, 0.9),
+                            end: const Offset(1, 1),
+                            delay: Duration(milliseconds: 50 * i),
+                            duration: 250.ms,
+                          );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+
+            // ── Sticky bottom bar ──
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 20, vertical: 14),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, -2)),
+                ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  children: [
+                    // Selection count
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _selected.isEmpty
+                            ? Colors.grey.shade100
+                            : AgriChainTheme.primaryGreen
+                                .withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 18,
+                            color: _selected.isEmpty
+                                ? AgriChainTheme.greyText
+                                : AgriChainTheme.primaryGreen,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${_selected.length} selected',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: _selected.isEmpty
+                                  ? AgriChainTheme.greyText
+                                  : AgriChainTheme.primaryGreen,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 52,
+                        child: ElevatedButton.icon(
+                          onPressed: _selected.isEmpty
+                              ? null
+                              : () => context.go('/soil-selection'),
+                          icon: const Icon(Icons.arrow_forward, size: 20),
+                          label: const Text('Next →',
+                              style: TextStyle(fontSize: 17)),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selected.isEmpty
-                      ? null
-                      : () => context.go('/soil-selection'),
-                  child: Text(
-                    'Continue (${_selected.length} selected)',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

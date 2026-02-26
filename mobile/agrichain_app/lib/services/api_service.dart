@@ -130,44 +130,44 @@ class ApiService {
       await Future.delayed(const Duration(milliseconds: 200));
       return ApiResult.success({
         'crops': [
-          {'id': 'wheat', 'name': 'Wheat', 'name_hi': 'गेहूँ', 'icon': '🌾'},
-          {'id': 'rice', 'name': 'Rice', 'name_hi': 'चावल', 'icon': '🍚'},
-          {
-            'id': 'tomato',
-            'name': 'Tomato',
-            'name_hi': 'टमाटर',
-            'icon': '🍅'
-          },
-          {
-            'id': 'onion',
-            'name': 'Onion',
-            'name_hi': 'प्याज',
-            'icon': '🧅'
-          },
-          {
-            'id': 'potato',
-            'name': 'Potato',
-            'name_hi': 'आलू',
-            'icon': '🥔'
-          },
-          {
-            'id': 'cotton',
-            'name': 'Cotton',
-            'name_hi': 'कपास',
-            'icon': '🏵️'
-          },
-          {
-            'id': 'sugarcane',
-            'name': 'Sugarcane',
-            'name_hi': 'गन्ना',
-            'icon': '🎋'
-          },
-          {
-            'id': 'soybean',
-            'name': 'Soybean',
-            'name_hi': 'सोयाबीन',
-            'icon': '🫘'
-          },
+          // Vegetables
+          {'id': 'tomato', 'name': 'Tomato', 'name_hi': 'टमाटर', 'icon': '🍅', 'category': 'Vegetables'},
+          {'id': 'onion', 'name': 'Onion', 'name_hi': 'प्याज', 'icon': '🧅', 'category': 'Vegetables'},
+          {'id': 'potato', 'name': 'Potato', 'name_hi': 'आलू', 'icon': '🥔', 'category': 'Vegetables'},
+          {'id': 'brinjal', 'name': 'Brinjal', 'name_hi': 'बैंगन', 'icon': '🍆', 'category': 'Vegetables'},
+          {'id': 'cabbage', 'name': 'Cabbage', 'name_hi': 'पत्तागोभी', 'icon': '🥬', 'category': 'Vegetables'},
+          {'id': 'chilli', 'name': 'Green Chilli', 'name_hi': 'हरी मिर्च', 'icon': '🌶️', 'category': 'Vegetables'},
+          // Fruits
+          {'id': 'mango', 'name': 'Mango', 'name_hi': 'आम', 'icon': '🥭', 'category': 'Fruits'},
+          {'id': 'banana', 'name': 'Banana', 'name_hi': 'केला', 'icon': '🍌', 'category': 'Fruits'},
+          {'id': 'grapes', 'name': 'Grapes', 'name_hi': 'अंगूर', 'icon': '🍇', 'category': 'Fruits'},
+          {'id': 'orange', 'name': 'Orange', 'name_hi': 'संतरा', 'icon': '🍊', 'category': 'Fruits'},
+          {'id': 'pomegranate', 'name': 'Pomegranate', 'name_hi': 'अनार', 'icon': '🫐', 'category': 'Fruits'},
+          // Grains
+          {'id': 'wheat', 'name': 'Wheat', 'name_hi': 'गेहूँ', 'icon': '🌾', 'category': 'Grains'},
+          {'id': 'rice', 'name': 'Rice', 'name_hi': 'चावल', 'icon': '🍚', 'category': 'Grains'},
+          {'id': 'maize', 'name': 'Maize', 'name_hi': 'मक्का', 'icon': '🌽', 'category': 'Grains'},
+          {'id': 'bajra', 'name': 'Bajra', 'name_hi': 'बाजरा', 'icon': '🌿', 'category': 'Grains'},
+          {'id': 'jowar', 'name': 'Jowar', 'name_hi': 'ज्वार', 'icon': '🪴', 'category': 'Grains'},
+          // Pulses
+          {'id': 'chickpea', 'name': 'Chickpea', 'name_hi': 'चना', 'icon': '🫘', 'category': 'Pulses'},
+          {'id': 'lentil', 'name': 'Lentil', 'name_hi': 'मसूर', 'icon': '🥣', 'category': 'Pulses'},
+          {'id': 'moong', 'name': 'Moong Dal', 'name_hi': 'मूँग', 'icon': '🌱', 'category': 'Pulses'},
+          {'id': 'tur', 'name': 'Tur/Arhar', 'name_hi': 'तूर/अरहर', 'icon': '🥜', 'category': 'Pulses'},
+          // Spices
+          {'id': 'turmeric', 'name': 'Turmeric', 'name_hi': 'हल्दी', 'icon': '🟡', 'category': 'Spices'},
+          {'id': 'ginger', 'name': 'Ginger', 'name_hi': 'अदरक', 'icon': '🫚', 'category': 'Spices'},
+          {'id': 'garlic', 'name': 'Garlic', 'name_hi': 'लहसुन', 'icon': '🧄', 'category': 'Spices'},
+          {'id': 'coriander', 'name': 'Coriander', 'name_hi': 'धनिया', 'icon': '🌿', 'category': 'Spices'},
+          // Cash Crops
+          {'id': 'cotton', 'name': 'Cotton', 'name_hi': 'कपास', 'icon': '🏵️', 'category': 'Cash Crops'},
+          {'id': 'sugarcane', 'name': 'Sugarcane', 'name_hi': 'गन्ना', 'icon': '🎋', 'category': 'Cash Crops'},
+          {'id': 'soybean', 'name': 'Soybean', 'name_hi': 'सोयाबीन', 'icon': '🫛', 'category': 'Cash Crops'},
+          {'id': 'tobacco', 'name': 'Tobacco', 'name_hi': 'तम्बाकू', 'icon': '🍃', 'category': 'Cash Crops'},
+          // Medicinal
+          {'id': 'aloe_vera', 'name': 'Aloe Vera', 'name_hi': 'एलोवेरा', 'icon': '🌵', 'category': 'Medicinal'},
+          {'id': 'ashwagandha', 'name': 'Ashwagandha', 'name_hi': 'अश्वगंधा', 'icon': '🪻', 'category': 'Medicinal'},
+          {'id': 'tulsi', 'name': 'Tulsi', 'name_hi': 'तुलसी', 'icon': '☘️', 'category': 'Medicinal'},
         ]
       });
     }
@@ -179,16 +179,60 @@ class ApiService {
       await Future.delayed(const Duration(milliseconds: 200));
       return ApiResult.success({
         'soil_types': [
-          {'id': 'alluvial', 'name': 'Alluvial', 'name_hi': 'जलोढ़'},
-          {'id': 'black', 'name': 'Black Soil', 'name_hi': 'काली मिट्टी'},
-          {'id': 'red', 'name': 'Red Soil', 'name_hi': 'लाल मिट्टी'},
+          {
+            'id': 'alluvial',
+            'name': 'Alluvial',
+            'name_hi': 'जलोढ़',
+            'color_hex': '#C8A96E',
+            'description': 'Found near river banks, very fertile',
+            'description_hi': 'नदी किनारे पाई जाती है, बहुत उपजाऊ',
+            'suitable_crops': ['Wheat', 'Rice', 'Sugarcane'],
+          },
+          {
+            'id': 'black',
+            'name': 'Black Soil',
+            'name_hi': 'काली मिट्टी',
+            'color_hex': '#3E2723',
+            'description': 'Retains moisture, great for cotton',
+            'description_hi': 'नमी रखती है, कपास के लिए बढ़िया',
+            'suitable_crops': ['Cotton', 'Soybean', 'Jowar'],
+          },
+          {
+            'id': 'red',
+            'name': 'Red Soil',
+            'name_hi': 'लाल मिट्टी',
+            'color_hex': '#BF360C',
+            'description': 'Rich in iron, needs fertilization',
+            'description_hi': 'लोहे से भरपूर, उर्वरक की जरूरत',
+            'suitable_crops': ['Groundnut', 'Potato', 'Maize'],
+          },
           {
             'id': 'laterite',
             'name': 'Laterite',
-            'name_hi': 'लैटेराइट'
+            'name_hi': 'लैटेराइट',
+            'color_hex': '#E65100',
+            'description': 'Found in heavy rainfall areas',
+            'description_hi': 'भारी वर्षा वाले क्षेत्र में पाई जाती है',
+            'suitable_crops': ['Tea', 'Coffee', 'Cashew'],
           },
-          {'id': 'sandy', 'name': 'Sandy', 'name_hi': 'रेतीली'},
-          {'id': 'clayey', 'name': 'Clayey', 'name_hi': 'चिकनी'},
+          {
+            'id': 'sandy',
+            'name': 'Sandy',
+            'name_hi': 'रेतीली',
+            'color_hex': '#F9A825',
+            'description': 'Quick drainage, needs frequent watering',
+            'description_hi': 'जल्दी सूखती है, बार-बार पानी चाहिए',
+            'suitable_crops': ['Bajra', 'Moong', 'Watermelon'],
+          },
+          {
+            'id': 'clayey',
+            'name': 'Clayey',
+            'name_hi': 'चिकनी',
+            'color_hex': '#795548',
+            'description': 'Heavy and sticky when wet, holds nutrients',
+            'description_hi': 'भारी और चिपचिपी, पोषक तत्व रखती है',
+            'suitable_crops': ['Rice', 'Wheat', 'Lentil'],
+          },
         ]
       });
     }

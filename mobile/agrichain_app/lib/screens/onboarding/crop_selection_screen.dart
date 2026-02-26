@@ -14,17 +14,16 @@ class CropSelectionScreen extends ConsumerStatefulWidget {
 }
 
 class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final Set<String> _selected = {};
   List<Map<String, dynamic>> _allCrops = [];
   List<String> _categories = [];
-  late TabController _tabController;
+  TabController? _tabController;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 0, vsync: this);
     _loadCrops();
   }
 
@@ -54,7 +53,7 @@ class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 

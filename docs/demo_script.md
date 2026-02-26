@@ -1,152 +1,78 @@
-# AgriChain Demo Script
+# AgriChain Live Demo Script (5 Minutes)
 
-> **Scenario:** Meet **Ramesh**, a tomato farmer in Nagpur, Maharashtra. He has 
-> just harvested **800 kg of tomatoes** from his farm and needs to decide what 
-> to do next. AgriChain will guide him through every decision.
+## Setup
 
----
-
-## Act 1: Onboarding (30 seconds)
-
-1. **Open the app** → Splash screen with AgriChain logo and tagline: 
-   *"Farm to Market Intelligence"*
-2. **Language Selection** → Ramesh taps **हिंदी** (Hindi)
-3. **Phone Login** → Enters `9876543210` → Receives OTP → Enters OTP
-4. **Profile Setup** → 
-   - Name: रमेश (Ramesh)
-   - Location: Nagpur (auto-detected via GPS)
-   - Primary crop: Tomato (टमाटर 🍅)
-   - Soil type: Black (काली मिट्टी ⬛)
-
-> **Narration:** "Ramesh opens AgriChain for the first time. In under 30 
-> seconds, he's set up with his location, crop, and soil type."
+- Backend running on J's laptop: `uvicorn backend.main:app --host 0.0.0.0 --port 8000`
+- App on M's phone/emulator connected to J's IP
+- Demo data seeded: `python backend/seed_demo_data.py`
 
 ---
 
-## Act 2: Harvest Score (45 seconds)
+## Minute 0-1: Onboarding
 
-5. **Dashboard** → Shows the harvest readiness card
-6. **Tap "Check Harvest Score"** →
-   - Input: 800 kg tomatoes, black soil, 32°C, 65% humidity
-   - **Score: 78/100** 🟢
-   - Explanation: "Good conditions for harvest. Temperature is moderate. 
-     Market prices are favorable this week."
-7. **See factors breakdown:**
-   - Weather: 80/100 ☁️
-   - Soil: 85/100 🟫
-   - Market Timing: 70/100 📈
-8. **Recommendation:** "✅ Harvest Now — conditions are favorable"
+> "Meet Ramesh, a tomato farmer from Nagpur."
 
-> **Narration:** "The AI analyzes weather, soil conditions, and market trends 
-> to give Ramesh a clear 78/100 harvest score. The app recommends harvesting 
-> today."
+1. Splash screen → Select **Hindi**
+2. Phone: `9999999999` → OTP: `123456`
+3. Name: **Ramesh**, Age: **45**, GPS: **Nagpur**
+4. Crops: **Tomato**, **Onion** → Soil: **Black** → Home page
 
 ---
 
-## Act 3: Spoilage Timer (45 seconds)
+## Minute 1-2: Harvest Score
 
-9. **After harvest** → Spoilage timer starts automatically
-10. **Current status:**
-    - Storage: Open floor (खुले में)
-    - Temperature: 32°C
-    - **Remaining: 36 hours** ⏳ (of 48 total)
-    - Urgency bar: 🟡 MEDIUM
-11. **Visual countdown** → Clock ticking, shows loss per hour (₹5/hour)
-12. **Alert:** "⚠️ At current temperature, you'll lose ₹200 worth of tomatoes 
-    in the next 12 hours if unsold."
+> "Every morning, Ramesh checks if today is the right day to harvest."
 
-> **Narration:** "The spoilage agent tells Ramesh his tomatoes will last 36 
-> more hours on the open floor. Every hour he waits, he loses ₹5 worth of 
-> produce."
+1. Home screen shows the **harvest score circle** (animated, yellow ~78)
+2. Tap **"Why this score?"** → AI explanation in Hindi
+3. _"The AI analyzed weather, market supply, and soil moisture to give Ramesh a simple number."_
 
 ---
 
-## Act 4: Market Comparison & Pocket Cash (60 seconds)
+## Minute 2-3: Market Optimizer
 
-13. **Tap "Compare Mandis"** → Map view with nearby mandis
-14. **Results table:**
+> "Ramesh harvests. Where should he sell?"
 
-| Mandi          | Price/kg | Distance | Transport | Pocket Cash |
-|----------------|----------|----------|-----------|-------------|
-| 🏆 Wardha APMC | ₹15      | 12 km    | ₹600      | **₹11,400** |
-| Nagpur APMC    | ₹18      | 5 km     | ₹300      | **₹14,100** |
-| Nashik APMC    | ₹25      | 580 km   | ₹8,000    | **₹12,000** |
-| Amravati APMC  | ₹22      | 155 km   | ₹3,500    | **₹14,100** |
-
-15. **Pocket Cash Insight:** "💡 Nashik offers ₹25/kg (highest!) but after 
-    transport costs, Nagpur gives you the same ₹14,100 in your pocket — 
-    and it's only 5 km away!"
-16. **Highlight:** The "Pocket Cash" column is emphasized — showing that 
-    the highest ₹/kg isn't always the best deal.
-
-> **Narration:** "This is the Pocket Cash concept. Nashik's price is ₹25/kg 
-> — the highest — but after ₹8,000 in transport, Ramesh only pockets ₹12,000. 
-> Nagpur at ₹18/kg is closer and puts ₹14,100 in his pocket. AgriChain makes 
-> this instantly clear."
+1. Go to **Market** tab → Tomato → **800 kg** → Find Best Mandi
+2. Three mandi cards appear with pocket cash amounts
+3. _"Amravati offers ₹22/kg — the highest price. But AgriChain recommends Wardha at ₹15/kg. Why?"_
+4. _"Less fuel + less spoilage = more cash in Ramesh's pocket."_ ← **Core value prop**
 
 ---
 
-## Act 5: Preservation Guidance (45 seconds)
+## Minute 3-4: Spoilage Monitor
 
-17. **Tap "How to save my crop?"** → Preservation options screen
-18. **Three options shown (ranked by cost):**
+> "Ramesh can't go to mandi today."
 
-| Method                  | Cost | Extra Days | Saves  |
-|------------------------|------|------------|--------|
-| 🟢 Wet Jute Bag Cover  | FREE | +1 day     | ₹200   |
-| 🟡 Plastic Crates      | ₹35  | +2 days    | ₹500   |
-| 🔵 ZECC Cool Chamber   | ₹100 | +5 days    | ₹1,200 |
-
-19. **Tap "Wet Jute Bag Cover"** → Step-by-step instructions in Hindi:
-    - चरण 1: जूट की बोरियों को 10 मिनट तक साफ पानी में भिगोएं
-    - चरण 2: अतिरिक्त पानी निचोड़ लें
-    - चरण 3: पूरे टमाटर के ढेर को समान रूप से ढकें
-    - चरण 4: ठंडक बनाए रखने के लिए हर 6 घंटे में बोरियों को फिर से गीला करें
-
-20. **Savings callout:** "💰 This FREE method can save you ₹200 worth of 
-    tomatoes. If you can invest ₹100 in a ZECC, you'll save ₹1,200!"
-
-> **Narration:** "Ramesh sees three preservation options. The first one costs 
-> nothing — just wet jute bags. The instructions are in Hindi with clear steps. 
-> For ₹100, a cool chamber could save him ₹1,200 worth of produce."
+1. Go to **Spoilage** tab → "I Have Harvested" → **Open Floor** storage
+2. Timer shows: **"Safe for 47 hours"** (green)
+3. Temperature rises → timer turns **yellow** → then **red**
+4. _"⚠️ Heatwave alert! Only 8 hours left. Act NOW."_
 
 ---
 
-## Act 6: Advice History & Savings (30 seconds)
+## Minute 4-5: Preservation + Impact
 
-21. **Navigate to "My History"** → Shows past decisions
-22. **Summary card:**
-    - Total harvests tracked: 3
-    - Total savings from AgriChain advice: ₹2,800
-    - Best decision: "Sold at Nagpur instead of Nashik — saved ₹2,100 
-      in transport"
-23. **Timeline view** → Each past interaction with outcome
+> "How can Ramesh protect his crop?"
 
-> **Narration:** "Over time, the app tracks all of Ramesh's decisions and 
-> shows cumulative savings. After just 3 harvests, he's already saved ₹2,800 
-> by following AgriChain's advice."
+1. Go to **Preservation** tab → 3 methods ranked by ROI
+2. _"Cooling bin: ₹75 cost, saves ₹1,200. That's 16x ROI."_
+3. Show **Advice History** → Total savings: **₹3,900**
+4. _"Over 30 days, AgriChain saved Ramesh nearly ₹4,000."_
 
 ---
 
-## Closing Summary (15 seconds)
+## Closing
 
-24. **Return to dashboard** → Shows:
-    - 🍅 800 kg tomatoes | Score: 78
-    - ⏳ 36 hours remaining
-    - 💰 Best mandi: Nagpur (₹14,100 pocket cash)
-    - 🧊 Try ZECC to extend by 5 days
-
-> **Narration:** "AgriChain gives Indian farmers like Ramesh the intelligence 
-> they need — from harvest timing to market selection to preservation — all 
-> in Hindi, all on their phone, all powered by AI."
+> "AgriChain doesn't tell farmers the highest price. It tells them the **most profitable decision**."
 
 ---
 
-**Total Demo Time: ~4.5 minutes**
+## Emergency Fallbacks
 
-### Key Points to Emphasize:
-1. **Bilingual** — Everything works in Hindi and English
-2. **Pocket Cash** — Highest price ≠ best deal (transport matters)
-3. **Zero-cost options** — Wet jute bags are FREE preservation
-4. **AI-powered** — Agents analyze multiple factors simultaneously
-5. **Quantified savings** — Every recommendation shows ₹ saved
+| If... | Do this |
+|-------|---------|
+| Agent takes too long | Endpoints return stub data automatically |
+| No internet | Weather uses fallback (35°C), agents still work |
+| API key missing | Explanation returns template text in Hindi |
+| DB empty | Notifications show hardcoded demo items |

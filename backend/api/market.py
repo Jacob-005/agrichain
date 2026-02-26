@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import Session
+
+from backend.models.database import get_db, AdviceHistory, generate_uuid
 
 router = APIRouter(prefix="/market", tags=["market"])
 
-# Stub fallback
 FALLBACK_RESPONSE = {
     "mandis": [
         {
@@ -18,9 +20,7 @@ FALLBACK_RESPONSE = {
             "risk_level": "low",
         }
     ],
-    "overall_recommendation": (
-        "Sell at Kalamna Mandi, Nagpur for best net returns."
-    ),
+    "overall_recommendation": "Sell at Kalamna Mandi, Nagpur for best net returns.",
 }
 
 
@@ -35,7 +35,7 @@ class MarketCompareRequest(BaseModel):
 
 
 @router.post("/compare")
-async def market_compare(req: MarketCompareRequest):
+async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db)):
     """Compare mandis for best net returns using AI agent."""
     try:
         from backend.agents.market_agent import run_market_agent
@@ -50,9 +50,21 @@ async def market_compare(req: MarketCompareRequest):
             storage_method=req.storage_method or "open_floor",
             language=req.language or "hindi",
         )
-        formatted = format_market_response(
-            result["explanation"], req.model_dump()
-        )
+        formatted = format_market_response(result["explanation"], req.model_dump())
+
+        try:
+            entry = AdviceHistory(
+                id=generate_uuid(),
+                user_id="demo-user",
+                type="market",
+                recommendation=result["explanation"][:500],
+                savings_rupees=800,
+            )
+            db.add(entry)
+            db.commit()
+        except Exception:
+            db.rollback()
+
         return {"success": True, "data": formatted}
     except Exception as e:
         print(f"Market endpoint fallback: {e}")

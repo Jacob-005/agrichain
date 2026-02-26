@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import Session
+
+from backend.models.database import get_db, AdviceHistory, generate_uuid
 
 router = APIRouter(prefix="/spoilage", tags=["spoilage"])
 
-# Stub fallback
 FALLBACK_RESPONSE = {
     "remaining_hours": 42.0,
     "remaining_days": 1.75,
@@ -25,7 +27,7 @@ class SpoilageCheckRequest(BaseModel):
 
 
 @router.post("/check")
-async def spoilage_check(req: SpoilageCheckRequest):
+async def spoilage_check(req: SpoilageCheckRequest, db: Session = Depends(get_db)):
     """Check spoilage risk using AI agent."""
     try:
         from backend.agents.spoilage_agent import run_spoilage_agent
@@ -39,9 +41,21 @@ async def spoilage_check(req: SpoilageCheckRequest):
             lng=req.lng or 79.0882,
             language=req.language or "hindi",
         )
-        formatted = format_spoilage_response(
-            result["explanation"], req.model_dump()
-        )
+        formatted = format_spoilage_response(result["explanation"], req.model_dump())
+
+        try:
+            entry = AdviceHistory(
+                id=generate_uuid(),
+                user_id="demo-user",
+                type="spoilage",
+                recommendation=result["explanation"][:500],
+                savings_rupees=300,
+            )
+            db.add(entry)
+            db.commit()
+        except Exception:
+            db.rollback()
+
         return {"success": True, "data": formatted}
     except Exception as e:
         print(f"Spoilage endpoint fallback: {e}")

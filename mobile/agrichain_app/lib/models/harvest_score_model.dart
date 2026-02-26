@@ -26,17 +26,48 @@ class HarvestScoreModel {
   });
 
   factory HarvestScoreModel.fromJson(Map<String, dynamic> json) {
+    // Handle real API ("data" wrapper) or direct mock
+    final d = json.containsKey('data') && json['data'] is Map
+        ? json['data'] as Map<String, dynamic>
+        : json;
+
+    // Real API uses 'score' and 'action', mock uses 'overall_score' and 'status'
+    final score = d['overall_score'] ?? d['score'] ?? 65;
+    final color = d['color'] ?? 'yellow';
+    String status;
+    if (d.containsKey('status')) {
+      status = d['status'] as String;
+    } else if (d.containsKey('action')) {
+      // Convert action → status: harvest_now→good, wait→caution, do_not_harvest→danger
+      final action = d['action'] as String? ?? '';
+      status = action == 'harvest_now'
+          ? 'good'
+          : action == 'do_not_harvest'
+          ? 'danger'
+          : color == 'green'
+          ? 'good'
+          : color == 'red'
+          ? 'danger'
+          : 'caution';
+    } else {
+      status = color == 'green'
+          ? 'good'
+          : color == 'red'
+          ? 'danger'
+          : 'caution';
+    }
+
     return HarvestScoreModel(
-      crop: json['crop'] ?? '',
-      overallScore: json['overall_score'] ?? 0,
-      weatherScore: json['weather_score'] ?? 0,
-      soilScore: json['soil_score'] ?? 0,
-      marketScore: json['market_score'] ?? 0,
-      recommendation: json['recommendation'] ?? '',
-      recommendationHi: json['recommendation_hi'] ?? '',
-      status: json['status'] ?? 'good',
-      explanation: json['explanation'] ?? '',
-      explanationHi: json['explanation_hi'] ?? '',
+      crop: d['crop'] ?? '',
+      overallScore: score is int ? score : (score as num).toInt(),
+      weatherScore: d['weather_score'] ?? (d['breakdown']?['weather'] ?? 0),
+      soilScore: d['soil_score'] ?? (d['breakdown']?['readiness'] ?? 0),
+      marketScore: d['market_score'] ?? (d['breakdown']?['market'] ?? 0),
+      recommendation: d['recommendation'] ?? d['explanation_text'] ?? '',
+      recommendationHi: d['recommendation_hi'] ?? '',
+      status: status,
+      explanation: d['explanation'] ?? d['explanation_text'] ?? '',
+      explanationHi: d['explanation_hi'] ?? '',
     );
   }
 
@@ -80,8 +111,8 @@ class HarvestScoreModel {
   }
 
   Map<String, int> get breakdown => {
-        'Weather': weatherScore,
-        'Market': marketScore,
-        'Soil/Readiness': soilScore,
-      };
+    'Weather': weatherScore,
+    'Market': marketScore,
+    'Soil/Readiness': soilScore,
+  };
 }

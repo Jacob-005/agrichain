@@ -2,14 +2,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
 
+// ── API Configuration ─────────────────────────────────────────────────────
 // Toggle this to switch between mock and real API
-const bool useMockApi = true;
+const bool useMockApi = false;
+
+// Change this to J's IP address (from ipconfig on J's laptop)
+// Use 10.0.2.2 for Android emulator → localhost
+const String backendIp = '10.17.25.144';
+const String apiBaseUrl = 'http://$backendIp:8000/api/v1';
 
 // ---------------------------------------------------------------------------
 // Service providers
 // ---------------------------------------------------------------------------
 final apiServiceProvider = Provider<ApiService>((ref) {
-  return ApiService(useMock: useMockApi);
+  return ApiService(useMock: useMockApi, baseUrl: apiBaseUrl);
 });
 
 final storageServiceProvider = Provider<StorageService>((ref) {
@@ -65,8 +71,9 @@ class UserStateNotifier extends StateNotifier<UserState> {
   void logout() => state = const UserState();
 }
 
-final userStateProvider =
-    StateNotifierProvider<UserStateNotifier, UserState>((ref) {
+final userStateProvider = StateNotifierProvider<UserStateNotifier, UserState>((
+  ref,
+) {
   return UserStateNotifier();
 });
 
@@ -86,11 +93,11 @@ class AppState {
 class AppStateNotifier extends StateNotifier<AppState> {
   AppStateNotifier() : super(const AppState());
 
-  void setNavIndex(int index) =>
-      state = state.copyWith(currentNavIndex: index);
+  void setNavIndex(int index) => state = state.copyWith(currentNavIndex: index);
 }
 
-final appStateProvider =
-    StateNotifierProvider<AppStateNotifier, AppState>((ref) {
+final appStateProvider = StateNotifierProvider<AppStateNotifier, AppState>((
+  ref,
+) {
   return AppStateNotifier();
 });

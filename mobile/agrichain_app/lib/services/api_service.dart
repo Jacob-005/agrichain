@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +18,10 @@ class ApiService {
   final String baseUrl;
   String? _authToken;
 
-  ApiService({this.useMock = true, this.baseUrl = 'http://10.0.2.2:8000/api'});
+  ApiService({
+    this.useMock = false,
+    this.baseUrl = 'http://10.17.25.144:8000/api/v1',
+  });
 
   void setAuthToken(String token) => _authToken = token;
 
@@ -30,11 +34,15 @@ class ApiService {
 
   Future<ApiResult<Map<String, dynamic>>> _get(String path) async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl$path'), headers: _headers);
+      final res = await http
+          .get(Uri.parse('$baseUrl$path'), headers: _headers)
+          .timeout(const Duration(seconds: 20));
       if (res.statusCode == 200) {
         return ApiResult.success(jsonDecode(res.body));
       }
       return ApiResult.failure('HTTP ${res.statusCode}: ${res.body}');
+    } on TimeoutException {
+      return ApiResult.failure('Request timed out. AI is busy, please retry.');
     } catch (e) {
       return ApiResult.failure(e.toString());
     }
@@ -45,15 +53,21 @@ class ApiService {
     Map<String, dynamic> body,
   ) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl$path'),
-        headers: _headers,
-        body: jsonEncode(body),
-      );
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl$path'),
+            headers: _headers,
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 25));
       if (res.statusCode == 200 || res.statusCode == 201) {
         return ApiResult.success(jsonDecode(res.body));
       }
       return ApiResult.failure('HTTP ${res.statusCode}: ${res.body}');
+    } on TimeoutException {
+      return ApiResult.failure(
+        'Request timed out. AI is thinking, please retry.',
+      );
     } catch (e) {
       return ApiResult.failure(e.toString());
     }
@@ -103,7 +117,7 @@ class ApiService {
         },
       });
     }
-    return _post('/profile', data);
+    return _post('/user/profile', data);
   }
 
   Future<ApiResult<Map<String, dynamic>>> getProfile() async {
@@ -120,7 +134,7 @@ class ApiService {
         'soil_type': 'alluvial',
       });
     }
-    return _get('/profile');
+    return _get('/user/profile');
   }
 
   // ─── Crops & Soil ─────────────────────────────────────────────────────
@@ -465,7 +479,7 @@ class ApiService {
             'अभी कटाई करने पर अगले हफ्ते भाव गिरने से पहले अधिकतम लाभ मिलेगा।',
       });
     }
-    return _get('/harvest-score?crop=$crop');
+    return _post('/harvest/score', {'crop': crop});
   }
 
   // ─── Market Comparison ────────────────────────────────────────────────
@@ -545,7 +559,7 @@ class ApiService {
         'best_option': 'Wardha Mandi',
       });
     }
-    return _get('/market/compare?crop=$crop&volume_kg=$volumeKg');
+    return _post('/market/compare', {'crop': crop, 'volume_kg': volumeKg});
   }
 
   // ─── Spoilage ─────────────────────────────────────────────────────────
@@ -614,7 +628,11 @@ class ApiService {
             'maximizes your returns.',
       });
     }
-    return _get('/spoilage/estimate?crop=$crop&storage=$storageMethod');
+    return _post('/spoilage/check', {
+      'crop': crop,
+      'storage_method': storageMethod,
+      'hours_since_harvest': 0,
+    });
   }
 
   // ─── Preservation ─────────────────────────────────────────────────────
@@ -721,7 +739,7 @@ class ApiService {
         ],
       });
     }
-    return _get('/preservation/methods?crop=$crop');
+    return _post('/preservation/options', {'crop': crop});
   }
 
   // ─── Chat ─────────────────────────────────────────────────────────────
@@ -738,7 +756,7 @@ class ApiService {
             'वर्तमान स्थितियों के आधार पर, आपकी गेहूं की फसल अच्छी स्थिति में है। सर्वोत्तम कीमतों के लिए अगले 5 दिनों में कटाई करने पर विचार करें।',
       });
     }
-    return _post('/chat', {'message': message});
+    return _post('/chat/', {'message': message});
   }
 
   // ─── Weather ──────────────────────────────────────────────────────────

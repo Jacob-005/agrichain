@@ -7,13 +7,9 @@ class ApiResult<T> {
   final String? error;
   final bool success;
 
-  ApiResult.success(this.data)
-      : error = null,
-        success = true;
+  ApiResult.success(this.data) : error = null, success = true;
 
-  ApiResult.failure(this.error)
-      : data = null,
-        success = false;
+  ApiResult.failure(this.error) : data = null, success = false;
 }
 
 class ApiService {
@@ -21,24 +17,20 @@ class ApiService {
   final String baseUrl;
   String? _authToken;
 
-  ApiService({
-    this.useMock = true,
-    this.baseUrl = 'http://10.0.2.2:8000/api',
-  });
+  ApiService({this.useMock = true, this.baseUrl = 'http://10.0.2.2:8000/api'});
 
   void setAuthToken(String token) => _authToken = token;
 
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (_authToken != null) 'Authorization': 'Bearer $_authToken',
-      };
+    'Content-Type': 'application/json',
+    if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+  };
 
   // ─── Helpers ──────────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> _get(String path) async {
     try {
-      final res =
-          await http.get(Uri.parse('$baseUrl$path'), headers: _headers);
+      final res = await http.get(Uri.parse('$baseUrl$path'), headers: _headers);
       if (res.statusCode == 200) {
         return ApiResult.success(jsonDecode(res.body));
       }
@@ -49,10 +41,15 @@ class ApiService {
   }
 
   Future<ApiResult<Map<String, dynamic>>> _post(
-      String path, Map<String, dynamic> body) async {
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     try {
-      final res = await http.post(Uri.parse('$baseUrl$path'),
-          headers: _headers, body: jsonEncode(body));
+      final res = await http.post(
+        Uri.parse('$baseUrl$path'),
+        headers: _headers,
+        body: jsonEncode(body),
+      );
       if (res.statusCode == 200 || res.statusCode == 201) {
         return ApiResult.success(jsonDecode(res.body));
       }
@@ -73,7 +70,9 @@ class ApiService {
   }
 
   Future<ApiResult<Map<String, dynamic>>> verifyOtp(
-      String phone, String otp) async {
+    String phone,
+    String otp,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 300));
       return ApiResult.success({
@@ -88,7 +87,8 @@ class ApiService {
   // ─── Profile ──────────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> createProfile(
-      Map<String, dynamic> data) async {
+    Map<String, dynamic> data,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 300));
       return ApiResult.success({
@@ -131,44 +131,230 @@ class ApiService {
       return ApiResult.success({
         'crops': [
           // Vegetables
-          {'id': 'tomato', 'name': 'Tomato', 'name_hi': 'टमाटर', 'icon': '🍅', 'category': 'Vegetables'},
-          {'id': 'onion', 'name': 'Onion', 'name_hi': 'प्याज', 'icon': '🧅', 'category': 'Vegetables'},
-          {'id': 'potato', 'name': 'Potato', 'name_hi': 'आलू', 'icon': '🥔', 'category': 'Vegetables'},
-          {'id': 'brinjal', 'name': 'Brinjal', 'name_hi': 'बैंगन', 'icon': '🍆', 'category': 'Vegetables'},
-          {'id': 'cabbage', 'name': 'Cabbage', 'name_hi': 'पत्तागोभी', 'icon': '🥬', 'category': 'Vegetables'},
-          {'id': 'chilli', 'name': 'Green Chilli', 'name_hi': 'हरी मिर्च', 'icon': '🌶️', 'category': 'Vegetables'},
+          {
+            'id': 'tomato',
+            'name': 'Tomato',
+            'name_hi': 'टमाटर',
+            'icon': '🍅',
+            'category': 'Vegetables',
+          },
+          {
+            'id': 'onion',
+            'name': 'Onion',
+            'name_hi': 'प्याज',
+            'icon': '🧅',
+            'category': 'Vegetables',
+          },
+          {
+            'id': 'potato',
+            'name': 'Potato',
+            'name_hi': 'आलू',
+            'icon': '🥔',
+            'category': 'Vegetables',
+          },
+          {
+            'id': 'brinjal',
+            'name': 'Brinjal',
+            'name_hi': 'बैंगन',
+            'icon': '🍆',
+            'category': 'Vegetables',
+          },
+          {
+            'id': 'cabbage',
+            'name': 'Cabbage',
+            'name_hi': 'पत्तागोभी',
+            'icon': '🥬',
+            'category': 'Vegetables',
+          },
+          {
+            'id': 'chilli',
+            'name': 'Green Chilli',
+            'name_hi': 'हरी मिर्च',
+            'icon': '🌶️',
+            'category': 'Vegetables',
+          },
           // Fruits
-          {'id': 'mango', 'name': 'Mango', 'name_hi': 'आम', 'icon': '🥭', 'category': 'Fruits'},
-          {'id': 'banana', 'name': 'Banana', 'name_hi': 'केला', 'icon': '🍌', 'category': 'Fruits'},
-          {'id': 'grapes', 'name': 'Grapes', 'name_hi': 'अंगूर', 'icon': '🍇', 'category': 'Fruits'},
-          {'id': 'orange', 'name': 'Orange', 'name_hi': 'संतरा', 'icon': '🍊', 'category': 'Fruits'},
-          {'id': 'pomegranate', 'name': 'Pomegranate', 'name_hi': 'अनार', 'icon': '🫐', 'category': 'Fruits'},
+          {
+            'id': 'mango',
+            'name': 'Mango',
+            'name_hi': 'आम',
+            'icon': '🥭',
+            'category': 'Fruits',
+          },
+          {
+            'id': 'banana',
+            'name': 'Banana',
+            'name_hi': 'केला',
+            'icon': '🍌',
+            'category': 'Fruits',
+          },
+          {
+            'id': 'grapes',
+            'name': 'Grapes',
+            'name_hi': 'अंगूर',
+            'icon': '🍇',
+            'category': 'Fruits',
+          },
+          {
+            'id': 'orange',
+            'name': 'Orange',
+            'name_hi': 'संतरा',
+            'icon': '🍊',
+            'category': 'Fruits',
+          },
+          {
+            'id': 'pomegranate',
+            'name': 'Pomegranate',
+            'name_hi': 'अनार',
+            'icon': '🫐',
+            'category': 'Fruits',
+          },
           // Grains
-          {'id': 'wheat', 'name': 'Wheat', 'name_hi': 'गेहूँ', 'icon': '🌾', 'category': 'Grains'},
-          {'id': 'rice', 'name': 'Rice', 'name_hi': 'चावल', 'icon': '🍚', 'category': 'Grains'},
-          {'id': 'maize', 'name': 'Maize', 'name_hi': 'मक्का', 'icon': '🌽', 'category': 'Grains'},
-          {'id': 'bajra', 'name': 'Bajra', 'name_hi': 'बाजरा', 'icon': '🌿', 'category': 'Grains'},
-          {'id': 'jowar', 'name': 'Jowar', 'name_hi': 'ज्वार', 'icon': '🪴', 'category': 'Grains'},
+          {
+            'id': 'wheat',
+            'name': 'Wheat',
+            'name_hi': 'गेहूँ',
+            'icon': '🌾',
+            'category': 'Grains',
+          },
+          {
+            'id': 'rice',
+            'name': 'Rice',
+            'name_hi': 'चावल',
+            'icon': '🍚',
+            'category': 'Grains',
+          },
+          {
+            'id': 'maize',
+            'name': 'Maize',
+            'name_hi': 'मक्का',
+            'icon': '🌽',
+            'category': 'Grains',
+          },
+          {
+            'id': 'bajra',
+            'name': 'Bajra',
+            'name_hi': 'बाजरा',
+            'icon': '🌿',
+            'category': 'Grains',
+          },
+          {
+            'id': 'jowar',
+            'name': 'Jowar',
+            'name_hi': 'ज्वार',
+            'icon': '🪴',
+            'category': 'Grains',
+          },
           // Pulses
-          {'id': 'chickpea', 'name': 'Chickpea', 'name_hi': 'चना', 'icon': '🫘', 'category': 'Pulses'},
-          {'id': 'lentil', 'name': 'Lentil', 'name_hi': 'मसूर', 'icon': '🥣', 'category': 'Pulses'},
-          {'id': 'moong', 'name': 'Moong Dal', 'name_hi': 'मूँग', 'icon': '🌱', 'category': 'Pulses'},
-          {'id': 'tur', 'name': 'Tur/Arhar', 'name_hi': 'तूर/अरहर', 'icon': '🥜', 'category': 'Pulses'},
+          {
+            'id': 'chickpea',
+            'name': 'Chickpea',
+            'name_hi': 'चना',
+            'icon': '🫘',
+            'category': 'Pulses',
+          },
+          {
+            'id': 'lentil',
+            'name': 'Lentil',
+            'name_hi': 'मसूर',
+            'icon': '🥣',
+            'category': 'Pulses',
+          },
+          {
+            'id': 'moong',
+            'name': 'Moong Dal',
+            'name_hi': 'मूँग',
+            'icon': '🌱',
+            'category': 'Pulses',
+          },
+          {
+            'id': 'tur',
+            'name': 'Tur/Arhar',
+            'name_hi': 'तूर/अरहर',
+            'icon': '🥜',
+            'category': 'Pulses',
+          },
           // Spices
-          {'id': 'turmeric', 'name': 'Turmeric', 'name_hi': 'हल्दी', 'icon': '🟡', 'category': 'Spices'},
-          {'id': 'ginger', 'name': 'Ginger', 'name_hi': 'अदरक', 'icon': '🫚', 'category': 'Spices'},
-          {'id': 'garlic', 'name': 'Garlic', 'name_hi': 'लहसुन', 'icon': '🧄', 'category': 'Spices'},
-          {'id': 'coriander', 'name': 'Coriander', 'name_hi': 'धनिया', 'icon': '🌿', 'category': 'Spices'},
+          {
+            'id': 'turmeric',
+            'name': 'Turmeric',
+            'name_hi': 'हल्दी',
+            'icon': '🟡',
+            'category': 'Spices',
+          },
+          {
+            'id': 'ginger',
+            'name': 'Ginger',
+            'name_hi': 'अदरक',
+            'icon': '🫚',
+            'category': 'Spices',
+          },
+          {
+            'id': 'garlic',
+            'name': 'Garlic',
+            'name_hi': 'लहसुन',
+            'icon': '🧄',
+            'category': 'Spices',
+          },
+          {
+            'id': 'coriander',
+            'name': 'Coriander',
+            'name_hi': 'धनिया',
+            'icon': '🌿',
+            'category': 'Spices',
+          },
           // Cash Crops
-          {'id': 'cotton', 'name': 'Cotton', 'name_hi': 'कपास', 'icon': '🏵️', 'category': 'Cash Crops'},
-          {'id': 'sugarcane', 'name': 'Sugarcane', 'name_hi': 'गन्ना', 'icon': '🎋', 'category': 'Cash Crops'},
-          {'id': 'soybean', 'name': 'Soybean', 'name_hi': 'सोयाबीन', 'icon': '🫛', 'category': 'Cash Crops'},
-          {'id': 'tobacco', 'name': 'Tobacco', 'name_hi': 'तम्बाकू', 'icon': '🍃', 'category': 'Cash Crops'},
+          {
+            'id': 'cotton',
+            'name': 'Cotton',
+            'name_hi': 'कपास',
+            'icon': '🏵️',
+            'category': 'Cash Crops',
+          },
+          {
+            'id': 'sugarcane',
+            'name': 'Sugarcane',
+            'name_hi': 'गन्ना',
+            'icon': '🎋',
+            'category': 'Cash Crops',
+          },
+          {
+            'id': 'soybean',
+            'name': 'Soybean',
+            'name_hi': 'सोयाबीन',
+            'icon': '🫛',
+            'category': 'Cash Crops',
+          },
+          {
+            'id': 'tobacco',
+            'name': 'Tobacco',
+            'name_hi': 'तम्बाकू',
+            'icon': '🍃',
+            'category': 'Cash Crops',
+          },
           // Medicinal
-          {'id': 'aloe_vera', 'name': 'Aloe Vera', 'name_hi': 'एलोवेरा', 'icon': '🌵', 'category': 'Medicinal'},
-          {'id': 'ashwagandha', 'name': 'Ashwagandha', 'name_hi': 'अश्वगंधा', 'icon': '🪻', 'category': 'Medicinal'},
-          {'id': 'tulsi', 'name': 'Tulsi', 'name_hi': 'तुलसी', 'icon': '☘️', 'category': 'Medicinal'},
-        ]
+          {
+            'id': 'aloe_vera',
+            'name': 'Aloe Vera',
+            'name_hi': 'एलोवेरा',
+            'icon': '🌵',
+            'category': 'Medicinal',
+          },
+          {
+            'id': 'ashwagandha',
+            'name': 'Ashwagandha',
+            'name_hi': 'अश्वगंधा',
+            'icon': '🪻',
+            'category': 'Medicinal',
+          },
+          {
+            'id': 'tulsi',
+            'name': 'Tulsi',
+            'name_hi': 'तुलसी',
+            'icon': '☘️',
+            'category': 'Medicinal',
+          },
+        ],
       });
     }
     return _get('/crops');
@@ -233,18 +419,22 @@ class ApiService {
             'description_hi': 'भारी और चिपचिपी, पोषक तत्व रखती है',
             'suitable_crops': ['Rice', 'Wheat', 'Lentil'],
           },
-        ]
+        ],
       });
     }
     return _get('/soil-types');
   }
 
   Future<ApiResult<Map<String, dynamic>>> addUserCrops(
-      List<String> cropIds) async {
+    List<String> cropIds,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 200));
-      return ApiResult.success(
-          {'success': true, 'message': 'Crops saved', 'crops': cropIds});
+      return ApiResult.success({
+        'success': true,
+        'message': 'Crops saved',
+        'crops': cropIds,
+      });
     }
     return _post('/profile/crops', {'crop_ids': cropIds});
   }
@@ -261,8 +451,7 @@ class ApiService {
         'soil_score': 72,
         'market_score': 76,
         'recommendation': 'Good time to harvest. Market prices are favourable.',
-        'recommendation_hi':
-            'फसल काटने का अच्छा समय है। बाजार भाव अनुकूल हैं।',
+        'recommendation_hi': 'फसल काटने का अच्छा समय है। बाजार भाव अनुकूल हैं।',
         'status': 'good',
         'explanation':
             'Weather conditions are favorable with no rain expected for 5 days. '
@@ -282,7 +471,9 @@ class ApiService {
   // ─── Market Comparison ────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> getMarketComparison(
-      String crop, double volumeKg) async {
+    String crop,
+    double volumeKg,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 400));
       // CRITICAL: Rank 1 has LOWER price/kg but HIGHEST pocket_cash
@@ -360,7 +551,10 @@ class ApiService {
   // ─── Spoilage ─────────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> getSpoilageCheck(
-      String crop, String storage, double hours) async {
+    String crop,
+    String storage,
+    double hours,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 300));
       return ApiResult.success({
@@ -372,22 +566,63 @@ class ApiService {
         'status': hours < 24
             ? 'good'
             : hours < 48
-                ? 'caution'
-                : 'danger',
+            ? 'caution'
+            : 'danger',
         'tip':
             'Move to cold storage within 24 hours to reduce spoilage by 60%.',
         'tip_hi':
             '24 घंटे के भीतर कोल्ड स्टोरेज में ले जाएं ताकि खराबी 60% कम हो।',
       });
     }
-    return _get(
-        '/spoilage?crop=$crop&storage=$storage&hours=$hours');
+    return _get('/spoilage?crop=$crop&storage=$storage&hours=$hours');
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getSpoilageEstimate(
+    String crop,
+    String storageMethod,
+  ) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      final hours = switch (storageMethod) {
+        'cold_storage' => 168.0,
+        'plastic_crates' => 72.0,
+        'jute_bags' => 48.0,
+        _ => 36.0, // open_floor
+      };
+      final initial = hours;
+      return ApiResult.success({
+        'crop': crop,
+        'remaining_hours': hours,
+        'initial_hours': initial,
+        'risk_level': hours > 72
+            ? 'low'
+            : hours > 36
+            ? 'medium'
+            : 'high',
+        'has_weather_alert': false,
+        'storage_method': switch (storageMethod) {
+          'cold_storage' => 'Cold Storage',
+          'plastic_crates' => 'Plastic Crates',
+          'jute_bags' => 'Jute Bags',
+          _ => 'Open Floor',
+        },
+        'temperature': 32,
+        'explanation':
+            'Based on current temperature (32°C) and your storage method, '
+            'your $crop has approximately ${hours.toStringAsFixed(0)} hours '
+            'before significant spoilage begins. Selling within this window '
+            'maximizes your returns.',
+      });
+    }
+    return _get('/spoilage/estimate?crop=$crop&storage=$storageMethod');
   }
 
   // ─── Preservation ─────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> getPreservationOptions(
-      String crop, String currentStorage) async {
+    String crop,
+    String currentStorage,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 300));
       return ApiResult.success({
@@ -421,14 +656,79 @@ class ApiService {
         ],
       });
     }
-    return _get(
-        '/preservation?crop=$crop&current_storage=$currentStorage');
+    return _get('/preservation?crop=$crop&current_storage=$currentStorage');
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getPreservationMethods(
+    String crop,
+  ) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      return ApiResult.success({
+        'crop': crop,
+        'methods': [
+          {
+            'level': 1,
+            'name': 'Jute Bag Layering',
+            'icon': '👜',
+            'cost_rupees': 0,
+            'extra_days': 2,
+            'saves_rupees': 600,
+            'instructions':
+                '1. Line jute bags with newspaper\n'
+                '2. Layer tomatoes in single rows\n'
+                '3. Place in shade with good air flow\n'
+                '4. Keep away from direct sunlight',
+            'explanation':
+                'Free method using materials you already have. '
+                'Adds 2 days of shelf life by improving air circulation.',
+          },
+          {
+            'level': 2,
+            'name': 'Plastic Crate Storage',
+            'icon': '📦',
+            'cost_rupees': 200,
+            'extra_days': 4,
+            'saves_rupees': 1400,
+            'instructions':
+                '1. Buy or rent plastic crates (₹50-80 each)\n'
+                '2. Line bottom with newspaper\n'
+                '3. Stack tomatoes max 3 layers deep\n'
+                '4. Store in covered, ventilated area\n'
+                '5. Check daily and remove damaged ones',
+            'explanation':
+                'Small investment for big returns. '
+                'Crates prevent crushing and allow air flow.',
+          },
+          {
+            'level': 3,
+            'name': 'Evaporative Cooling Bin',
+            'icon': '❄️',
+            'cost_rupees': 500,
+            'extra_days': 7,
+            'saves_rupees': 2800,
+            'instructions':
+                '1. Get two clay pots (one smaller inside larger)\n'
+                '2. Fill gap between pots with wet sand\n'
+                '3. Place tomatoes in inner pot\n'
+                '4. Cover with wet cloth\n'
+                '5. Keep sand moist — add water twice daily\n'
+                '6. Temperature drops 10-15°C naturally',
+            'explanation':
+                'Traditional "Zeer Pot" method. Best value — '
+                'spend ₹500 to save ₹2,800 in potential rot loss.',
+          },
+        ],
+      });
+    }
+    return _get('/preservation/methods?crop=$crop');
   }
 
   // ─── Chat ─────────────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> sendChatMessage(
-      String message) async {
+    String message,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 500));
       return ApiResult.success({
@@ -444,7 +744,9 @@ class ApiService {
   // ─── Weather ──────────────────────────────────────────────────────────
 
   Future<ApiResult<Map<String, dynamic>>> getWeather(
-      double lat, double lng) async {
+    double lat,
+    double lng,
+  ) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 300));
       return ApiResult.success({

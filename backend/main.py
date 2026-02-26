@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.models.database import create_tables
-from backend.api import auth, user, harvest, market, spoilage, preservation, chat, middleware
+from backend.api import auth, user, harvest, market, spoilage, preservation, chat, middleware, voice
+from backend.config.stats import stats
 
 app = FastAPI(
     title="AgriChain API",
@@ -28,6 +29,7 @@ app.include_router(spoilage.router, prefix="/api/v1")
 app.include_router(preservation.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
 app.include_router(middleware.router, prefix="/api/v1")
+app.include_router(voice.router, prefix="/api/v1")
 
 
 # ── Startup event ───────────────────────────────────────────────────────────
@@ -40,3 +42,10 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "AgriChain API", "docs": "/docs"}
+
+
+# ── Stats endpoint ──────────────────────────────────────────────────────────
+@app.get("/api/v1/stats")
+async def get_stats():
+    """Get server request statistics."""
+    return {"success": True, "data": stats.get_summary()}

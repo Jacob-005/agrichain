@@ -4,20 +4,18 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from backend.models.database import get_db, AdviceHistory, generate_uuid
+from backend.config.cache import agent_cache
+from backend.config.stats import stats
 
 router = APIRouter(prefix="/market", tags=["market"])
 
 FALLBACK_RESPONSE = {
     "mandis": [
         {
-            "rank": 1,
-            "name": "Kalamna Mandi, Nagpur",
-            "price_per_kg": 22.0,
-            "distance_km": 12.5,
-            "fuel_cost": 85.0,
-            "spoilage_loss": 30.0,
-            "pocket_cash": 17485.0,
-            "risk_level": "low",
+            "rank": 1, "name": "Kalamna Mandi, Nagpur",
+            "price_per_kg": 22.0, "distance_km": 12.5,
+            "fuel_cost": 85.0, "spoilage_loss": 30.0,
+            "pocket_cash": 17485.0, "risk_level": "low",
         }
     ],
     "overall_recommendation": "Sell at Kalamna Mandi, Nagpur for best net returns.",
@@ -36,16 +34,21 @@ class MarketCompareRequest(BaseModel):
 
 @router.post("/compare")
 async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db)):
-    """Compare mandis for best net returns using AI agent."""
+    """Compare mandis using AI agent (cached)."""
+    cache_key = agent_cache.make_key("market", req.crop, req.volume_kg, req.lat)
+    cached = agent_cache.get(cache_key)
+    if cached:
+        stats.record("market", success=True, cached=True)
+        cached["cached"] = True
+        return cached
+
     try:
         from backend.agents.market_agent import run_market_agent
         from backend.orchestrator.formatter import format_market_response
 
         result = run_market_agent(
-            crop=req.crop,
-            volume_kg=req.volume_kg,
-            farmer_lat=req.lat or 21.1458,
-            farmer_lng=req.lng or 79.0882,
+            crop=req.crop, volume_kg=req.volume_kg,
+            farmer_lat=req.lat or 21.1458, farmer_lng=req.lng or 79.0882,
             current_temp_c=req.current_temp_c or 35,
             storage_method=req.storage_method or "open_floor",
             language=req.language or "hindi",
@@ -54,10 +57,8 @@ async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db
 
         try:
             entry = AdviceHistory(
-                id=generate_uuid(),
-                user_id="demo-user",
-                type="market",
-                recommendation=result["explanation"][:500],
+                id=generate_uuid(), user_id="demo-user",
+                type="market", recommendation=result["explanation"][:500],
                 savings_rupees=800,
             )
             db.add(entry)
@@ -65,7 +66,11 @@ async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db
         except Exception:
             db.rollback()
 
-        return {"success": True, "data": formatted}
+        response = {"success": True, "data": formatted}
+        agent_cache.set(cache_key, response)
+        stats.record("market", success=True)
+        return response
     except Exception as e:
         print(f"Market endpoint fallback: {e}")
+        stats.record("market", success=False)
         return {"success": True, "data": FALLBACK_RESPONSE, "fallback": True}

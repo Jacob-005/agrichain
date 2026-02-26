@@ -6,3 +6,4 @@ __pycache__/
 *.db
 mobile/agrichain_app/.dart_tool/
 mobile/agrichain_app/build/
+backend/temp_audio/*.mp3

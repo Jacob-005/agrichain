@@ -1,6 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import Session
+
+from backend.models.database import get_db
+from backend.config.cache import agent_cache
+from backend.config.stats import stats
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -21,7 +26,14 @@ class ChatRequest(BaseModel):
 
 @router.post("/")
 async def chat(req: ChatRequest):
-    """Chat with AgriChain orchestrator — routes to appropriate agent."""
+    """Chat with AgriChain orchestrator — routes to appropriate agent (cached)."""
+    cache_key = agent_cache.make_key("chat", req.message, req.crop)
+    cached = agent_cache.get(cache_key)
+    if cached:
+        stats.record("chat", success=True, cached=True)
+        cached["cached"] = True
+        return cached
+
     try:
         from backend.orchestrator.router import orchestrate
         from backend.orchestrator.formatter import format_response
@@ -45,17 +57,18 @@ async def chat(req: ChatRequest):
         )
         formatted["data"]["intent"] = orch_result["intent"]
         formatted["data"]["agent_used"] = orch_result["agent_used"]
+
+        agent_cache.set(cache_key, formatted)
+        stats.record("chat", success=True)
         return formatted
     except Exception as e:
         print(f"Chat endpoint error: {e}")
+        stats.record("chat", success=False)
         return {
             "success": True,
             "data": {
                 "intent": "harvest",
-                "response": (
-                    "Your harvest score is 78 out of 100. The market "
-                    "conditions suggest waiting 2-3 days for better prices."
-                ),
+                "response": "Your harvest score is 78 out of 100. Wait 2-3 days for better prices.",
                 "structured_data": None,
             },
             "fallback": True,

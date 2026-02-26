@@ -1,0 +1,162 @@
+# AgriChain API Contract
+# Version: 1.0.0
+# This file is the single source of truth for all API schemas.
+# G defines it in Phase 1. M builds the Flutter app against it. J tests it.
+
+base_url: http://{G_LAPTOP_IP}:8000/api/v1
+
+endpoints:
+
+  # ── Auth ────────────────────────────────────────────────────────────────
+
+  POST /auth/send-otp:
+    request: { phone: string }
+    response: { success: bool, message: string }
+
+  POST /auth/verify-otp:
+    request: { phone: string, otp: string }
+    response: { success: bool, token: string, is_new_user: bool }
+
+  # ── User Profile ────────────────────────────────────────────────────────
+
+  POST /user/profile:
+    request: { name: string, age: int, lat: float, lng: float, district: string, soil_type: string, language: string }
+    response: { success: bool, user_id: string }
+    headers: { Authorization: "Bearer {token}" }
+
+  GET /user/profile:
+    response: { success: bool, data: { name, age, lat, lng, district, soil_type, language, crops: [] } }
+
+  PUT /user/profile:
+    request: { ...partial fields... }
+    response: { success: bool }
+
+  # ── Crops ───────────────────────────────────────────────────────────────
+
+  GET /crops:
+    response: { success: bool, data: { categories: [{ name: string, crops: [{ id, name, icon_url }] }] } }
+
+  POST /user/crops:
+    request: { crop_ids: [string] }
+    response: { success: bool }
+
+  # ── Soil Types ──────────────────────────────────────────────────────────
+
+  GET /soil-types:
+    response: { success: bool, data: [{ id, name, icon_url, description }] }
+
+  # ── Harvest Score ───────────────────────────────────────────────────────
+
+  POST /harvest/score:
+    request: { crop: string }
+    response:
+      success: bool
+      data:
+        score: int (0-100)
+        color: "green"|"yellow"|"red"
+        recommendation: string
+        explanation: string
+        breakdown: { weather: int, market: int, readiness: int }
+
+  # ── Market Comparison ───────────────────────────────────────────────────
+
+  POST /market/compare:
+    request: { crop: string, volume_kg: float }
+    response:
+      success: bool
+      data:
+        mandis:
+          - rank: int
+            name: string
+            price_per_kg: float
+            distance_km: float
+            fuel_cost: float
+            spoilage_loss: float
+            spoilage_pct: float
+            pocket_cash: float
+            risk_level: "low"|"medium"|"high"
+            explanation: string
+        overall_recommendation: string
+
+  # ── Spoilage ────────────────────────────────────────────────────────────
+
+  POST /spoilage/check:
+    request: { crop: string, storage_method: string, hours_since_harvest: float }
+    response:
+      success: bool
+      data:
+        remaining_hours: float
+        remaining_days: float
+        risk_level: "low"|"medium"|"high"
+        color: "green"|"yellow"|"red"
+        has_weather_alert: bool
+        alert_message: string|null
+        explanation: string
+
+  # ── Preservation ────────────────────────────────────────────────────────
+
+  POST /preservation/options:
+    request: { crop: string, current_storage: string }
+    response:
+      success: bool
+      data:
+        methods:
+          - level: int
+            name: string
+            cost_rupees: float
+            extra_days: int
+            saves_rupees: float
+            instructions: string
+            explanation: string
+
+  # ── Chat (Orchestrator) ─────────────────────────────────────────────────
+
+  POST /chat:
+    request: { message: string }
+    response:
+      success: bool
+      data:
+        intent: "harvest"|"market"|"spoilage"|"preservation"
+        response: string
+        structured_data: object|null
+
+  # ── Weather ─────────────────────────────────────────────────────────────
+
+  GET /weather?lat={lat}&lng={lng}:
+    response:
+      success: bool
+      data:
+        temp_c: float
+        humidity_pct: int
+        description: string
+        forecast: [{ day, temp_c, humidity_pct, description }]
+
+  # ── Advice History ──────────────────────────────────────────────────────
+
+  GET /advice-history:
+    response:
+      success: bool
+      data:
+        - date: string
+          type: string
+          recommendation: string
+          followed: bool
+          savings_rupees: float
+
+  # ── Notifications ───────────────────────────────────────────────────────
+
+  GET /notifications:
+    response:
+      success: bool
+      data:
+        - id: string
+          title: string
+          body: string
+          type: string
+          timestamp: string
+          read: bool
+
+  # ── Health ──────────────────────────────────────────────────────────────
+
+  GET /health:
+    response: { status: "ok", version: "1.0.0" }

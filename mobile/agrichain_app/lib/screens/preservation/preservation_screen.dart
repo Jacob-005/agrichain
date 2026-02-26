@@ -5,6 +5,8 @@ import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../models/preservation_model.dart';
 import '../../widgets/preservation_card.dart';
+import '../../widgets/loading_indicator.dart';
+import '../../widgets/error_card.dart';
 
 class PreservationScreen extends ConsumerStatefulWidget {
   const PreservationScreen({super.key});
@@ -16,6 +18,8 @@ class PreservationScreen extends ConsumerStatefulWidget {
 class _PreservationScreenState extends ConsumerState<PreservationScreen> {
   List<PreservationModel> _methods = [];
   bool _loading = true;
+  String? _error;
+  String? _explanationText;
 
   @override
   void initState() {
@@ -24,16 +28,44 @@ class _PreservationScreenState extends ConsumerState<PreservationScreen> {
   }
 
   Future<void> _loadMethods() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+      _explanationText = null;
+    });
     final api = ref.read(apiServiceProvider);
     final result = await api.getPreservationMethods('Tomato');
 
     if (result.success && result.data != null) {
-      final list = List<Map<String, dynamic>>.from(
-        result.data!['methods'] ?? [],
-      );
+      final raw = result.data!;
+      final payload = raw.containsKey('data') && raw['data'] is Map
+          ? raw['data'] as Map<String, dynamic>
+          : raw;
+
+      final explText = payload['explanation_text'] as String?;
+      final list = List<Map<String, dynamic>>.from(payload['methods'] ?? []);
+      if (list.isNotEmpty) {
+        setState(() {
+          _methods = list.map((m) => PreservationModel.fromJson(m)).toList();
+          _methods.sort((a, b) => b.level.compareTo(a.level));
+          _explanationText = explText;
+          _loading = false;
+        });
+      } else if (explText != null && explText.isNotEmpty) {
+        setState(() {
+          _methods = [];
+          _explanationText = explText;
+          _loading = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No preservation data available';
+          _loading = false;
+        });
+      }
+    } else {
       setState(() {
-        _methods = list.map((m) => PreservationModel.fromJson(m)).toList();
-        _methods.sort((a, b) => b.level.compareTo(a.level));
+        _error = result.error ?? 'Unknown error';
         _loading = false;
       });
     }
@@ -42,8 +74,16 @@ class _PreservationScreenState extends ConsumerState<PreservationScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AgriChainTheme.primaryGreen),
+      return const LoadingIndicator(
+        message: 'Finding best preservation methods...',
+        emoji: '❄️',
+      );
+    }
+
+    if (_error != null) {
+      return ErrorCard(
+        message: ErrorCard.friendlyMessage(_error!),
+        onRetry: _loadMethods,
       );
     }
 
@@ -101,6 +141,51 @@ class _PreservationScreenState extends ConsumerState<PreservationScreen> {
                 )
                 .slideY(begin: 0.05, end: 0);
           }),
+
+          // ── AI Explanation (from real API) ──
+          if (_explanationText != null && _explanationText!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AgriChainTheme.primaryGreen.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AgriChainTheme.primaryGreen.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Text('🤖', style: TextStyle(fontSize: 20)),
+                        SizedBox(width: 8),
+                        Text(
+                          'AI Preservation Analysis',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _explanationText!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AgriChainTheme.darkText,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
           const SizedBox(height: 16),
 

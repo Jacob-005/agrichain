@@ -6,6 +6,7 @@ import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../models/mandi_result_model.dart';
 import '../../widgets/mandi_card.dart';
+import '../../widgets/error_card.dart';
 
 class MarketScreen extends ConsumerStatefulWidget {
   const MarketScreen({super.key});
@@ -19,6 +20,8 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   final _qtyController = TextEditingController();
   bool _loading = false;
   bool _searched = false;
+  String? _error;
+  String? _explanationText;
   List<MandiResultModel> _results = [];
   String _bestOption = '';
 
@@ -51,41 +54,75 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     setState(() {
       _loading = true;
       _searched = false;
+      _error = null;
+      _explanationText = null;
     });
 
     final api = ref.read(apiServiceProvider);
     final result = await api.getMarketComparison(_selectedCrop!, qty);
 
     if (result.success && result.data != null) {
-      final mandisJson =
-          List<Map<String, dynamic>>.from(result.data!['mandis'] ?? []);
-      final mandis = mandisJson.map((m) => MandiResultModel.fromJson(m)).toList();
-      mandis.sort((a, b) => b.pocketCash.compareTo(a.pocketCash));
-      // Assign ranks after sorting
-      for (int i = 0; i < mandis.length; i++) {
-        mandis[i] = MandiResultModel(
-          rank: i + 1,
-          name: mandis[i].name,
-          pricePerKg: mandis[i].pricePerKg,
-          distanceKm: mandis[i].distanceKm,
-          fuelCost: mandis[i].fuelCost,
-          spoilageLoss: mandis[i].spoilageLoss,
-          spoilagePct: mandis[i].spoilagePct,
-          pocketCash: mandis[i].pocketCash,
-          riskLevel: mandis[i].riskLevel,
-          explanation: mandis[i].explanation,
-          demand: mandis[i].demand,
-        );
+      // Real API returns {success, data:{...}}, mock returns flat
+      final raw = result.data!;
+      final payload = raw.containsKey('data') && raw['data'] is Map
+          ? raw['data'] as Map<String, dynamic>
+          : raw;
+
+      // Check for explanation_text (real API)
+      final explText = payload['explanation_text'] as String?;
+
+      // Try to parse structured mandis (mock or fallback)
+      final mandisJson = List<Map<String, dynamic>>.from(
+        payload['mandis'] ?? [],
+      );
+      if (mandisJson.isNotEmpty) {
+        final mandis = mandisJson
+            .map((m) => MandiResultModel.fromJson(m))
+            .toList();
+        mandis.sort((a, b) => b.pocketCash.compareTo(a.pocketCash));
+        for (int i = 0; i < mandis.length; i++) {
+          mandis[i] = MandiResultModel(
+            rank: i + 1,
+            name: mandis[i].name,
+            pricePerKg: mandis[i].pricePerKg,
+            distanceKm: mandis[i].distanceKm,
+            fuelCost: mandis[i].fuelCost,
+            spoilageLoss: mandis[i].spoilageLoss,
+            spoilagePct: mandis[i].spoilagePct,
+            pocketCash: mandis[i].pocketCash,
+            riskLevel: mandis[i].riskLevel,
+            explanation: mandis[i].explanation,
+            demand: mandis[i].demand,
+          );
+        }
+        setState(() {
+          _results = mandis;
+          _bestOption =
+              payload['best_option'] ?? payload['overall_recommendation'] ?? '';
+          _explanationText = explText;
+          _loading = false;
+          _searched = true;
+        });
+      } else if (explText != null && explText.isNotEmpty) {
+        // Real API: no structured mandis, show explanation_text
+        setState(() {
+          _results = [];
+          _explanationText = explText;
+          _bestOption = payload['overall_recommendation'] ?? '';
+          _loading = false;
+          _searched = true;
+        });
+      } else {
+        setState(() {
+          _error = 'No market data available';
+          _loading = false;
+        });
       }
-      setState(() {
-        _results = mandis;
-        _bestOption = result.data!['best_option'] ?? '';
-        _loading = false;
-        _searched = true;
-      });
     } else {
-      setState(() => _loading = false);
-      _showSnackBar('Failed to fetch data. Try again.');
+      setState(() {
+        _error = result.error ?? 'Unknown error';
+        _loading = false;
+      });
     }
   }
 
@@ -124,21 +161,21 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
             value: _selectedCrop,
             decoration: const InputDecoration(
               labelText: 'Select Crop',
-              prefixIcon:
-                  Icon(Icons.eco, color: AgriChainTheme.primaryGreen),
+              prefixIcon: Icon(Icons.eco, color: AgriChainTheme.primaryGreen),
             ),
             items: _crops
-                .map((c) => DropdownMenuItem(
-                      value: c['id'],
-                      child: Row(
-                        children: [
-                          Text(c['icon']!,
-                              style: const TextStyle(fontSize: 20)),
-                          const SizedBox(width: 8),
-                          Text(c['name']!),
-                        ],
-                      ),
-                    ))
+                .map(
+                  (c) => DropdownMenuItem(
+                    value: c['id'],
+                    child: Row(
+                      children: [
+                        Text(c['icon']!, style: const TextStyle(fontSize: 20)),
+                        const SizedBox(width: 8),
+                        Text(c['name']!),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(),
             onChanged: (val) => setState(() => _selectedCrop = val),
           ),
@@ -153,8 +190,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
             decoration: const InputDecoration(
               labelText: 'Enter quantity (kg)',
               hintText: 'e.g. 800',
-              prefixIcon: Icon(Icons.scale,
-                  color: AgriChainTheme.primaryGreen),
+              prefixIcon: Icon(Icons.scale, color: AgriChainTheme.primaryGreen),
               suffixText: 'kg',
             ),
           ),
@@ -171,7 +207,10 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : const Icon(Icons.search, size: 22),
               label: Text(
                 _loading
@@ -185,9 +224,58 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
           const SizedBox(height: 24),
 
           // ─── Results or empty state ──────────────────────────
-          if (!_searched && !_loading) _buildEmptyState(),
+          if (_error != null && !_loading)
+            ErrorCard(
+              message: ErrorCard.friendlyMessage(_error!),
+              onRetry: _findBestMandi,
+            ),
+          if (!_searched && !_loading && _error == null) _buildEmptyState(),
           if (_searched && _results.isNotEmpty) _buildResults(),
+          if (_searched && _results.isEmpty && _explanationText != null)
+            _buildExplanationCard(),
         ],
+      ),
+    );
+  }
+
+  /// Shows AI explanation text when structured mandi data isn't available
+  Widget _buildExplanationCard() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AgriChainTheme.primaryGreen.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AgriChainTheme.primaryGreen.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Text('🤖', style: TextStyle(fontSize: 24)),
+                SizedBox(width: 10),
+                Text(
+                  'AI Market Analysis',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              _explanationText ?? '',
+              style: const TextStyle(
+                fontSize: 15,
+                color: AgriChainTheme.darkText,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -205,15 +293,21 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
                 color: AgriChainTheme.primaryGreen.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.store,
-                  size: 40, color: AgriChainTheme.primaryGreen),
+              child: const Icon(
+                Icons.store,
+                size: 40,
+                color: AgriChainTheme.primaryGreen,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
               'Enter crop and quantity to find\nthe best mandi for you',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 16, color: AgriChainTheme.greyText, height: 1.4),
+                fontSize: 16,
+                color: AgriChainTheme.greyText,
+                height: 1.4,
+              ),
             ),
           ],
         ),
@@ -275,9 +369,10 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
               const Text(
                 'Spoilage increases with distance →',
                 style: TextStyle(
-                    fontSize: 12,
-                    color: AgriChainTheme.greyText,
-                    fontStyle: FontStyle.italic),
+                  fontSize: 12,
+                  color: AgriChainTheme.greyText,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -323,16 +418,21 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('AI Recommendation',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      const Text(
+                        'AI Recommendation',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         'Sell at $_bestOption for the best net return. Lower per-kg price but you save on fuel and spoilage.',
                         style: const TextStyle(
-                            fontSize: 14,
-                            color: AgriChainTheme.darkText,
-                            height: 1.4),
+                          fontSize: 14,
+                          color: AgriChainTheme.darkText,
+                          height: 1.4,
+                        ),
                       ),
                     ],
                   ),

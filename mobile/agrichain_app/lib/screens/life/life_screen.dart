@@ -37,8 +37,13 @@ class _LifeScreenState extends ConsumerState<LifeScreen> {
     );
 
     if (result.success && result.data != null) {
+      // Real API returns {success, data:{...}}, mock returns flat
+      final raw = result.data!;
+      final payload = raw.containsKey('data') && raw['data'] is Map
+          ? raw['data'] as Map<String, dynamic>
+          : raw;
       setState(() {
-        _spoilageData = SpoilageModel.fromJson(result.data!);
+        _spoilageData = SpoilageModel.fromJson(payload);
         _state = _LifeState.activeTimer;
       });
     }

@@ -1,50 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../app/providers.dart';
 import '../../app/theme.dart';
+import '../../widgets/loading_indicator.dart';
+import '../../widgets/error_card.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final notifications = [
-      {
-        'type': 'alert',
-        'icon': '⚠️',
-        'title': 'Heatwave Warning',
-        'body':
-            'Temperature expected to reach 42°C tomorrow. Your tomato crop may spoil 30% faster.',
-        'time': '2 hours ago',
-        'unread': true,
-      },
-      {
-        'type': 'price',
-        'icon': '💰',
-        'title': 'Price Alert: Tomato',
-        'body':
-            'Tomato price at Wardha Mandi rose by 18% to ₹22/kg. Good time to sell!',
-        'time': '5 hours ago',
-        'unread': true,
-      },
-      {
-        'type': 'harvest',
-        'icon': '🌾',
-        'title': 'Harvest Reminder',
-        'body':
-            'Your tomato crop harvest score is 78/100. Market conditions are favorable for harvest.',
-        'time': '1 day ago',
-        'unread': false,
-      },
-      {
-        'type': 'info',
-        'icon': '🎉',
-        'title': 'Welcome to AgriChain!',
-        'body':
-            'Your profile is set up. Start by checking your Harvest Score on the Home tab.',
-        'time': '2 days ago',
-        'unread': false,
-      },
-    ];
+  ConsumerState<NotificationScreen> createState() => _NotificationScreenState();
+}
 
+class _NotificationScreenState extends ConsumerState<NotificationScreen> {
+  List<Map<String, dynamic>> _notifications = [];
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    final api = ref.read(apiServiceProvider);
+    final result = await api.getNotifications();
+
+    if (result.success && result.data != null) {
+      final raw = result.data!;
+      // Real API: {success, data: [...]}
+      // Mock: {notifications: [...]}
+      List<dynamic> list;
+      if (raw['data'] is List) {
+        list = raw['data'];
+      } else if (raw['notifications'] is List) {
+        list = raw['notifications'];
+      } else {
+        list = [];
+      }
+      setState(() {
+        _notifications = List<Map<String, dynamic>>.from(list);
+        _loading = false;
+      });
+    } else {
+      setState(() {
+        _error = result.error ?? 'Failed to load notifications';
+        _loading = false;
+      });
+    }
+  }
+
+  String _typeIcon(String type) {
+    switch (type) {
+      case 'alert':
+        return '⚠️';
+      case 'price':
+        return '💰';
+      case 'harvest':
+        return '🌾';
+      case 'welcome':
+        return '🎉';
+      default:
+        return '📢';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -53,84 +80,103 @@ class NotificationScreen extends StatelessWidget {
         foregroundColor: AgriChainTheme.darkText,
         elevation: 0,
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: notifications.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (context, i) {
-          final n = notifications[i];
-          final isUnread = n['unread'] as bool;
-          return Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: isUnread
-                  ? Colors.blue.withValues(alpha: 0.04)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Unread dot
-                if (isUnread)
-                  Container(
-                    width: 8,
-                    height: 8,
-                    margin: const EdgeInsets.only(top: 6, right: 8),
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
-                    ),
-                  )
-                else
-                  const SizedBox(width: 16),
-
-                // Icon
-                Text(n['icon'] as String, style: const TextStyle(fontSize: 24)),
-                const SizedBox(width: 10),
-
-                // Content
-                Expanded(
-                  child: Column(
+      body: _loading
+          ? const LoadingIndicator(message: 'Loading notifications...')
+          : _error != null
+          ? ErrorCard(
+              message: ErrorCard.friendlyMessage(_error!),
+              onRetry: _loadNotifications,
+            )
+          : _notifications.isEmpty
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: Text(
+                  'No notifications yet 🔕',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AgriChainTheme.greyText,
+                  ),
+                ),
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: _notifications.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemBuilder: (context, i) {
+                final n = _notifications[i];
+                final isUnread = n['read'] == false;
+                final type = n['type'] ?? '';
+                return Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isUnread
+                        ? Colors.blue.withValues(alpha: 0.04)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (isUnread)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.only(top: 6, right: 8),
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 16),
                       Text(
-                        n['title'] as String,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: isUnread
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                        ),
+                        _typeIcon(type),
+                        style: const TextStyle(fontSize: 24),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        n['body'] as String,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AgriChainTheme.greyText,
-                          height: 1.3,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        n['time'] as String,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade500,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              n['title'] ?? '',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: isUnread
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              n['body'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AgriChainTheme.greyText,
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              n['timestamp'] ?? n['time'] ?? '',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

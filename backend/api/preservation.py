@@ -1,72 +1,48 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from typing import Optional
 
 router = APIRouter(prefix="/preservation", tags=["preservation"])
+
+# Stub fallback
+FALLBACK_RESPONSE = {
+    "methods": [
+        {
+            "level": 1,
+            "name": "Wet Jute Bag Cover",
+            "cost_rupees": 20.0,
+            "extra_days": 2,
+            "saves_rupees": 500.0,
+            "instructions": "Wrap produce in damp jute bags. Keep in shade.",
+        }
+    ]
+}
 
 
 class PreservationOptionsRequest(BaseModel):
     crop: str
-    current_storage: str
+    current_storage: str = "open_floor"
+    temp_c: Optional[float] = 35
+    language: Optional[str] = "hindi"
 
 
 @router.post("/options")
 async def preservation_options(req: PreservationOptionsRequest):
-    """Get preservation method options (stub with mock data)."""
-    return {
-        "success": True,
-        "data": {
-            "methods": [
-                {
-                    "level": 1,
-                    "name": "Wet Jute Bag Cover",
-                    "cost_rupees": 20.0,
-                    "extra_days": 2,
-                    "saves_rupees": 500.0,
-                    "instructions": (
-                        "Wrap produce in damp jute bags. Keep in shade. "
-                        "Re-wet every 6 hours. Works best for leafy "
-                        "vegetables and tomatoes."
-                    ),
-                    "explanation": (
-                        "Cheapest option. Evaporative cooling extends "
-                        "freshness by ~2 days. Suitable for small batches."
-                    ),
-                },
-                {
-                    "level": 2,
-                    "name": "Ventilated Plastic Crates",
-                    "cost_rupees": 150.0,
-                    "extra_days": 4,
-                    "saves_rupees": 1200.0,
-                    "instructions": (
-                        "Place produce in ventilated plastic crates. "
-                        "Stack max 3 high. Store in shade with airflow. "
-                        "Do not mix different crops."
-                    ),
-                    "explanation": (
-                        "Moderate cost. Reduces bruising and compression "
-                        "damage by 60%. Reusable crates pay for themselves "
-                        "in 3 uses."
-                    ),
-                },
-                {
-                    "level": 3,
-                    "name": "CoolBot Cooling Chamber",
-                    "cost_rupees": 500.0,
-                    "extra_days": 10,
-                    "saves_rupees": 3500.0,
-                    "instructions": (
-                        "Transport to nearest CoolBot facility or use "
-                        "community cold storage. Maintain 4°C for "
-                        "tomatoes, 10°C for bananas. Pre-cool before "
-                        "storing."
-                    ),
-                    "explanation": (
-                        "Highest cost but biggest savings. Community "
-                        "cold storage shared costs make this viable for "
-                        f"batches over 100 kg of {req.crop}."
-                    ),
-                },
-            ]
-        },
-    }
+    """Get preservation method options using AI agent."""
+    try:
+        from backend.agents.preservation_agent import run_preservation_agent
+        from backend.orchestrator.formatter import format_preservation_response
+
+        result = run_preservation_agent(
+            crop=req.crop,
+            current_storage=req.current_storage,
+            temp_c=req.temp_c or 35,
+            language=req.language or "hindi",
+        )
+        formatted = format_preservation_response(
+            result["explanation"], req.model_dump()
+        )
+        return {"success": True, "data": formatted}
+    except Exception as e:
+        print(f"Preservation endpoint fallback: {e}")
+        return {"success": True, "data": FALLBACK_RESPONSE, "fallback": True}

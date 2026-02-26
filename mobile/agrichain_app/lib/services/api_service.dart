@@ -19,8 +19,8 @@ class ApiService {
   String? _authToken;
 
   ApiService({
-    this.useMock = true,
-    this.baseUrl = 'http://10.0.2.2:8000/api/v1',
+    this.useMock = false,
+    this.baseUrl = 'http://10.17.25.144:8000/api/v1',
   });
 
   void setAuthToken(String token) => _authToken = token;

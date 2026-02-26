@@ -8,7 +8,7 @@ const bool useMockApi = false;
 
 // Change this to J's IP address (from ipconfig on J's laptop)
 // Use 10.0.2.2 for Android emulator → localhost
-const String backendIp = '10.0.2.2';
+const String backendIp = '10.17.25.144';
 const String apiBaseUrl = 'http://$backendIp:8000/api/v1';
 
 // ---------------------------------------------------------------------------

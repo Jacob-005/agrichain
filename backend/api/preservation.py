@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import Session
+
+from backend.models.database import get_db, AdviceHistory, generate_uuid
 
 router = APIRouter(prefix="/preservation", tags=["preservation"])
 
-# Stub fallback
 FALLBACK_RESPONSE = {
     "methods": [
         {
@@ -27,7 +29,7 @@ class PreservationOptionsRequest(BaseModel):
 
 
 @router.post("/options")
-async def preservation_options(req: PreservationOptionsRequest):
+async def preservation_options(req: PreservationOptionsRequest, db: Session = Depends(get_db)):
     """Get preservation method options using AI agent."""
     try:
         from backend.agents.preservation_agent import run_preservation_agent
@@ -39,9 +41,21 @@ async def preservation_options(req: PreservationOptionsRequest):
             temp_c=req.temp_c or 35,
             language=req.language or "hindi",
         )
-        formatted = format_preservation_response(
-            result["explanation"], req.model_dump()
-        )
+        formatted = format_preservation_response(result["explanation"], req.model_dump())
+
+        try:
+            entry = AdviceHistory(
+                id=generate_uuid(),
+                user_id="demo-user",
+                type="preservation",
+                recommendation=result["explanation"][:500],
+                savings_rupees=500,
+            )
+            db.add(entry)
+            db.commit()
+        except Exception:
+            db.rollback()
+
         return {"success": True, "data": formatted}
     except Exception as e:
         print(f"Preservation endpoint fallback: {e}")

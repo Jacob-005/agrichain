@@ -1,10 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import Session
+
+from backend.models.database import get_db, AdviceHistory, generate_uuid
 
 router = APIRouter(prefix="/harvest", tags=["harvest"])
 
-# Stub fallback in case agent fails
+# Stub fallback
 FALLBACK_RESPONSE = {
     "score": 78,
     "color": "yellow",
@@ -27,7 +30,7 @@ class HarvestScoreRequest(BaseModel):
 
 
 @router.post("/score")
-async def harvest_score(req: HarvestScoreRequest):
+async def harvest_score(req: HarvestScoreRequest, db: Session = Depends(get_db)):
     """Calculate harvest score using AI agent."""
     try:
         from backend.agents.harvest_agent import run_harvest_agent
@@ -41,9 +44,22 @@ async def harvest_score(req: HarvestScoreRequest):
             district=req.district or "Nagpur",
             language=req.language or "hindi",
         )
-        formatted = format_harvest_response(
-            result["explanation"], req.model_dump()
-        )
+        formatted = format_harvest_response(result["explanation"], req.model_dump())
+
+        # Log advice
+        try:
+            entry = AdviceHistory(
+                id=generate_uuid(),
+                user_id="demo-user",
+                type="harvest",
+                recommendation=result["explanation"][:500],
+                savings_rupees=500,
+            )
+            db.add(entry)
+            db.commit()
+        except Exception:
+            db.rollback()
+
         return {"success": True, "data": formatted}
     except Exception as e:
         print(f"Harvest endpoint fallback: {e}")

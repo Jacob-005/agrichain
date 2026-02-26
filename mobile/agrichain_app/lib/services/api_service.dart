@@ -1,0 +1,451 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+/// Standardised result wrapper for API calls.
+class ApiResult<T> {
+  final T? data;
+  final String? error;
+  final bool success;
+
+  ApiResult.success(this.data)
+      : error = null,
+        success = true;
+
+  ApiResult.failure(this.error)
+      : data = null,
+        success = false;
+}
+
+class ApiService {
+  final bool useMock;
+  final String baseUrl;
+  String? _authToken;
+
+  ApiService({
+    this.useMock = true,
+    this.baseUrl = 'http://10.0.2.2:8000/api',
+  });
+
+  void setAuthToken(String token) => _authToken = token;
+
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+        if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+      };
+
+  // ─── Helpers ──────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> _get(String path) async {
+    try {
+      final res =
+          await http.get(Uri.parse('$baseUrl$path'), headers: _headers);
+      if (res.statusCode == 200) {
+        return ApiResult.success(jsonDecode(res.body));
+      }
+      return ApiResult.failure('HTTP ${res.statusCode}: ${res.body}');
+    } catch (e) {
+      return ApiResult.failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> _post(
+      String path, Map<String, dynamic> body) async {
+    try {
+      final res = await http.post(Uri.parse('$baseUrl$path'),
+          headers: _headers, body: jsonEncode(body));
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return ApiResult.success(jsonDecode(res.body));
+      }
+      return ApiResult.failure('HTTP ${res.statusCode}: ${res.body}');
+    } catch (e) {
+      return ApiResult.failure(e.toString());
+    }
+  }
+
+  // ─── Auth ─────────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> sendOtp(String phone) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({'success': true, 'message': 'OTP sent'});
+    }
+    return _post('/auth/send-otp', {'phone': phone});
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> verifyOtp(
+      String phone, String otp) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({
+        'success': true,
+        'token': 'mock_jwt_token_123',
+        'is_new_user': true,
+      });
+    }
+    return _post('/auth/verify-otp', {'phone': phone, 'otp': otp});
+  }
+
+  // ─── Profile ──────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> createProfile(
+      Map<String, dynamic> data) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({
+        'success': true,
+        'user': {
+          'id': 'user_001',
+          'name': data['name'] ?? 'Demo Farmer',
+          'phone': data['phone'] ?? '9876543210',
+          'village': data['village'] ?? 'Nagpur',
+          'district': data['district'] ?? 'Nagpur',
+          'state': data['state'] ?? 'Maharashtra',
+        },
+      });
+    }
+    return _post('/profile', data);
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getProfile() async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success({
+        'id': 'user_001',
+        'name': 'Demo Farmer',
+        'phone': '9876543210',
+        'village': 'Nagpur',
+        'district': 'Nagpur',
+        'state': 'Maharashtra',
+        'crops': ['wheat', 'rice'],
+        'soil_type': 'alluvial',
+      });
+    }
+    return _get('/profile');
+  }
+
+  // ─── Crops & Soil ─────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getCrops() async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success({
+        'crops': [
+          {'id': 'wheat', 'name': 'Wheat', 'name_hi': 'गेहूँ', 'icon': '🌾'},
+          {'id': 'rice', 'name': 'Rice', 'name_hi': 'चावल', 'icon': '🍚'},
+          {
+            'id': 'tomato',
+            'name': 'Tomato',
+            'name_hi': 'टमाटर',
+            'icon': '🍅'
+          },
+          {
+            'id': 'onion',
+            'name': 'Onion',
+            'name_hi': 'प्याज',
+            'icon': '🧅'
+          },
+          {
+            'id': 'potato',
+            'name': 'Potato',
+            'name_hi': 'आलू',
+            'icon': '🥔'
+          },
+          {
+            'id': 'cotton',
+            'name': 'Cotton',
+            'name_hi': 'कपास',
+            'icon': '🏵️'
+          },
+          {
+            'id': 'sugarcane',
+            'name': 'Sugarcane',
+            'name_hi': 'गन्ना',
+            'icon': '🎋'
+          },
+          {
+            'id': 'soybean',
+            'name': 'Soybean',
+            'name_hi': 'सोयाबीन',
+            'icon': '🫘'
+          },
+        ]
+      });
+    }
+    return _get('/crops');
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getSoilTypes() async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success({
+        'soil_types': [
+          {'id': 'alluvial', 'name': 'Alluvial', 'name_hi': 'जलोढ़'},
+          {'id': 'black', 'name': 'Black Soil', 'name_hi': 'काली मिट्टी'},
+          {'id': 'red', 'name': 'Red Soil', 'name_hi': 'लाल मिट्टी'},
+          {
+            'id': 'laterite',
+            'name': 'Laterite',
+            'name_hi': 'लैटेराइट'
+          },
+          {'id': 'sandy', 'name': 'Sandy', 'name_hi': 'रेतीली'},
+          {'id': 'clayey', 'name': 'Clayey', 'name_hi': 'चिकनी'},
+        ]
+      });
+    }
+    return _get('/soil-types');
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> addUserCrops(
+      List<String> cropIds) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success(
+          {'success': true, 'message': 'Crops saved', 'crops': cropIds});
+    }
+    return _post('/profile/crops', {'crop_ids': cropIds});
+  }
+
+  // ─── Harvest Score ────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getHarvestScore(String crop) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      return ApiResult.success({
+        'crop': crop,
+        'overall_score': 78,
+        'weather_score': 85,
+        'soil_score': 72,
+        'market_score': 76,
+        'recommendation': 'Good time to harvest. Market prices are favourable.',
+        'recommendation_hi':
+            'फसल काटने का अच्छा समय है। बाजार भाव अनुकूल हैं।',
+        'status': 'good', // good | caution | danger
+      });
+    }
+    return _get('/harvest-score?crop=$crop');
+  }
+
+  // ─── Market Comparison ────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getMarketComparison(
+      String crop, double volumeKg) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      return ApiResult.success({
+        'crop': crop,
+        'volume_kg': volumeKg,
+        'mandis': [
+          {
+            'name': 'Nagpur APMC',
+            'distance_km': 12,
+            'price_per_kg': 25.5,
+            'total_revenue': volumeKg * 25.5,
+            'transport_cost': 500,
+            'net_profit': (volumeKg * 25.5) - 500,
+            'demand': 'high',
+          },
+          {
+            'name': 'Wardha Mandi',
+            'distance_km': 78,
+            'price_per_kg': 28.0,
+            'total_revenue': volumeKg * 28.0,
+            'transport_cost': 1500,
+            'net_profit': (volumeKg * 28.0) - 1500,
+            'demand': 'medium',
+          },
+          {
+            'name': 'Amravati Market',
+            'distance_km': 155,
+            'price_per_kg': 30.0,
+            'total_revenue': volumeKg * 30.0,
+            'transport_cost': 3000,
+            'net_profit': (volumeKg * 30.0) - 3000,
+            'demand': 'low',
+          },
+        ],
+        'best_option': 'Nagpur APMC',
+      });
+    }
+    return _get('/market/compare?crop=$crop&volume_kg=$volumeKg');
+  }
+
+  // ─── Spoilage ─────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getSpoilageCheck(
+      String crop, String storage, double hours) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({
+        'crop': crop,
+        'storage_type': storage,
+        'hours_since_harvest': hours,
+        'spoilage_percentage': (hours / 100 * 15).clamp(0, 100),
+        'remaining_hours': (72 - hours).clamp(0, 72),
+        'status': hours < 24
+            ? 'good'
+            : hours < 48
+                ? 'caution'
+                : 'danger',
+        'tip':
+            'Move to cold storage within 24 hours to reduce spoilage by 60%.',
+        'tip_hi':
+            '24 घंटे के भीतर कोल्ड स्टोरेज में ले जाएं ताकि खराबी 60% कम हो।',
+      });
+    }
+    return _get(
+        '/spoilage?crop=$crop&storage=$storage&hours=$hours');
+  }
+
+  // ─── Preservation ─────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getPreservationOptions(
+      String crop, String currentStorage) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({
+        'crop': crop,
+        'current_storage': currentStorage,
+        'options': [
+          {
+            'method': 'Cold Storage',
+            'method_hi': 'कोल्ड स्टोरेज',
+            'icon': '❄️',
+            'extends_life_hours': 168,
+            'cost_per_kg': 2.5,
+            'availability': 'Available at 3km',
+          },
+          {
+            'method': 'Drying',
+            'method_hi': 'सुखाना',
+            'icon': '☀️',
+            'extends_life_hours': 720,
+            'cost_per_kg': 1.0,
+            'availability': 'Can do at home',
+          },
+          {
+            'method': 'Vacuum Packing',
+            'method_hi': 'वैक्यूम पैकिंग',
+            'icon': '📦',
+            'extends_life_hours': 360,
+            'cost_per_kg': 5.0,
+            'availability': 'Available at 15km',
+          },
+        ],
+      });
+    }
+    return _get(
+        '/preservation?crop=$crop&current_storage=$currentStorage');
+  }
+
+  // ─── Chat ─────────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> sendChatMessage(
+      String message) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      return ApiResult.success({
+        'reply':
+            'Based on current conditions, your wheat crop is in good health. Consider harvesting within the next 5 days for optimal prices.',
+        'reply_hi':
+            'वर्तमान स्थितियों के आधार पर, आपकी गेहूं की फसल अच्छी स्थिति में है। सर्वोत्तम कीमतों के लिए अगले 5 दिनों में कटाई करने पर विचार करें।',
+      });
+    }
+    return _post('/chat', {'message': message});
+  }
+
+  // ─── Weather ──────────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getWeather(
+      double lat, double lng) async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      return ApiResult.success({
+        'location': 'Nagpur, Maharashtra',
+        'temperature': 32,
+        'humidity': 65,
+        'condition': 'Partly Cloudy',
+        'icon': '⛅',
+        'forecast': [
+          {'day': 'Today', 'high': 34, 'low': 22, 'condition': 'Sunny'},
+          {'day': 'Tomorrow', 'high': 33, 'low': 21, 'condition': 'Cloudy'},
+          {'day': 'Day 3', 'high': 30, 'low': 20, 'condition': 'Rain'},
+        ],
+      });
+    }
+    return _get('/weather?lat=$lat&lng=$lng');
+  }
+
+  // ─── Advice History ───────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getAdviceHistory() async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success({
+        'history': [
+          {
+            'id': '1',
+            'type': 'harvest',
+            'crop': 'Wheat',
+            'advice': 'Harvest in 3 days for best price.',
+            'date': '2026-02-25',
+            'status': 'followed',
+          },
+          {
+            'id': '2',
+            'type': 'market',
+            'crop': 'Tomato',
+            'advice': 'Sell at Nagpur APMC — price peak expected.',
+            'date': '2026-02-24',
+            'status': 'pending',
+          },
+          {
+            'id': '3',
+            'type': 'preservation',
+            'crop': 'Onion',
+            'advice': 'Move to cold storage immediately.',
+            'date': '2026-02-23',
+            'status': 'ignored',
+          },
+        ],
+      });
+    }
+    return _get('/advice-history');
+  }
+
+  // ─── Notifications ────────────────────────────────────────────────────
+
+  Future<ApiResult<Map<String, dynamic>>> getNotifications() async {
+    if (useMock) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return ApiResult.success({
+        'notifications': [
+          {
+            'id': '1',
+            'title': 'Price Alert',
+            'body': 'Wheat price up 12% at Nagpur APMC',
+            'type': 'market',
+            'read': false,
+            'timestamp': '2026-02-26T10:30:00',
+          },
+          {
+            'id': '2',
+            'title': 'Spoilage Warning',
+            'body': 'Tomatoes reaching critical spoilage in 6 hours',
+            'type': 'spoilage',
+            'read': false,
+            'timestamp': '2026-02-26T09:15:00',
+          },
+          {
+            'id': '3',
+            'title': 'Weather Alert',
+            'body': 'Heavy rain expected tomorrow — plan harvest today',
+            'type': 'weather',
+            'read': true,
+            'timestamp': '2026-02-25T18:00:00',
+          },
+        ],
+      });
+    }
+    return _get('/notifications');
+  }
+}

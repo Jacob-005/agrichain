@@ -1,0 +1,445 @@
+{
+    "tomato": [
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 18,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Wardha APMC",
+            "price_per_kg": 15,
+            "lat": 20.7453,
+            "lng": 78.6022,
+            "district": "Wardha",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Amravati APMC",
+            "price_per_kg": 22,
+            "lat": 20.9374,
+            "lng": 77.7796,
+            "district": "Amravati",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nashik APMC",
+            "price_per_kg": 25,
+            "lat": 20.0063,
+            "lng": 73.7897,
+            "district": "Nashik",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Pune APMC",
+            "price_per_kg": 20,
+            "lat": 18.5204,
+            "lng": 73.8567,
+            "district": "Pune",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "onion": [
+        {
+            "mandi": "Nashik APMC (Lasalgaon)",
+            "price_per_kg": 12,
+            "lat": 20.1431,
+            "lng": 73.7894,
+            "district": "Nashik",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 15,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 10,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Pune APMC",
+            "price_per_kg": 18,
+            "lat": 18.5204,
+            "lng": 73.8567,
+            "district": "Pune",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 20,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "potato": [
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 14,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Patna APMC",
+            "price_per_kg": 12,
+            "lat": 25.6093,
+            "lng": 85.1376,
+            "district": "Patna",
+            "state": "Bihar",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Kolkata Mandi",
+            "price_per_kg": 16,
+            "lat": 22.5726,
+            "lng": 88.3639,
+            "district": "Kolkata",
+            "state": "West Bengal",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 11,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Bhopal APMC",
+            "price_per_kg": 18,
+            "lat": 23.2599,
+            "lng": 77.4126,
+            "district": "Bhopal",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "banana": [
+        {
+            "mandi": "Pune APMC",
+            "price_per_kg": 22,
+            "lat": 18.5204,
+            "lng": 73.8567,
+            "district": "Pune",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 18,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Hyderabad (Bowenpally)",
+            "price_per_kg": 25,
+            "lat": 17.4725,
+            "lng": 78.4801,
+            "district": "Hyderabad",
+            "state": "Telangana",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Siliguri Mandi",
+            "price_per_kg": 30,
+            "lat": 26.7271,
+            "lng": 88.3953,
+            "district": "Darjeeling",
+            "state": "West Bengal",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Patna APMC",
+            "price_per_kg": 20,
+            "lat": 25.6093,
+            "lng": 85.1376,
+            "district": "Patna",
+            "state": "Bihar",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "wheat": [
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 24,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Bhopal APMC",
+            "price_per_kg": 26,
+            "lat": 23.2599,
+            "lng": 77.4126,
+            "district": "Bhopal",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 28,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 23,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Patna APMC",
+            "price_per_kg": 30,
+            "lat": 25.6093,
+            "lng": 85.1376,
+            "district": "Patna",
+            "state": "Bihar",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "rice": [
+        {
+            "mandi": "Kolkata Mandi",
+            "price_per_kg": 35,
+            "lat": 22.5726,
+            "lng": 88.3639,
+            "district": "Kolkata",
+            "state": "West Bengal",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Patna APMC",
+            "price_per_kg": 32,
+            "lat": 25.6093,
+            "lng": 85.1376,
+            "district": "Patna",
+            "state": "Bihar",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 38,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Hyderabad (Bowenpally)",
+            "price_per_kg": 42,
+            "lat": 17.4725,
+            "lng": 78.4801,
+            "district": "Hyderabad",
+            "state": "Telangana",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Visakhapatnam APMC",
+            "price_per_kg": 45,
+            "lat": 17.6868,
+            "lng": 83.2185,
+            "district": "Visakhapatnam",
+            "state": "Andhra Pradesh",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "cotton": [
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 62,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Amravati APMC",
+            "price_per_kg": 58,
+            "lat": 20.9374,
+            "lng": 77.7796,
+            "district": "Amravati",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 65,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Wardha APMC",
+            "price_per_kg": 55,
+            "lat": 20.7453,
+            "lng": 78.6022,
+            "district": "Wardha",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "chana": [
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 52,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Bhopal APMC",
+            "price_per_kg": 48,
+            "lat": 23.2599,
+            "lng": 77.4126,
+            "district": "Bhopal",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 55,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 60,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "turmeric": [
+        {
+            "mandi": "Nashik APMC",
+            "price_per_kg": 95,
+            "lat": 20.0063,
+            "lng": 73.7897,
+            "district": "Nashik",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Hyderabad (Bowenpally)",
+            "price_per_kg": 110,
+            "lat": 17.4725,
+            "lng": 78.4801,
+            "district": "Hyderabad",
+            "state": "Telangana",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Indore Mandi",
+            "price_per_kg": 88,
+            "lat": 22.7196,
+            "lng": 75.8577,
+            "district": "Indore",
+            "state": "Madhya Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 100,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        }
+    ],
+    "mango": [
+        {
+            "mandi": "Nagpur APMC",
+            "price_per_kg": 50,
+            "lat": 21.1458,
+            "lng": 79.0882,
+            "district": "Nagpur",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Lucknow Mandi",
+            "price_per_kg": 65,
+            "lat": 26.8467,
+            "lng": 80.9462,
+            "district": "Lucknow",
+            "state": "Uttar Pradesh",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Hyderabad (Bowenpally)",
+            "price_per_kg": 80,
+            "lat": 17.4725,
+            "lng": 78.4801,
+            "district": "Hyderabad",
+            "state": "Telangana",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Pune APMC",
+            "price_per_kg": 55,
+            "lat": 18.5204,
+            "lng": 73.8567,
+            "district": "Pune",
+            "state": "Maharashtra",
+            "last_updated": "2026-02-26"
+        },
+        {
+            "mandi": "Kolkata Mandi",
+            "price_per_kg": 70,
+            "lat": 22.5726,
+            "lng": 88.3639,
+            "district": "Kolkata",
+            "state": "West Bengal",
+            "last_updated": "2026-02-26"
+        }
+    ]
+}

@@ -1,0 +1,146 @@
+[
+    {
+        "id": "nagpur_apmc",
+        "name": "Nagpur APMC",
+        "lat": 21.1458,
+        "lng": 79.0882,
+        "district": "Nagpur",
+        "state": "Maharashtra",
+        "type": "APMC"
+    },
+    {
+        "id": "amravati_apmc",
+        "name": "Amravati APMC",
+        "lat": 20.9374,
+        "lng": 77.7796,
+        "district": "Amravati",
+        "state": "Maharashtra",
+        "type": "APMC"
+    },
+    {
+        "id": "wardha_apmc",
+        "name": "Wardha APMC",
+        "lat": 20.7453,
+        "lng": 78.6022,
+        "district": "Wardha",
+        "state": "Maharashtra",
+        "type": "APMC"
+    },
+    {
+        "id": "nashik_apmc",
+        "name": "Nashik APMC (Lasalgaon)",
+        "lat": 20.0063,
+        "lng": 73.7897,
+        "district": "Nashik",
+        "state": "Maharashtra",
+        "type": "APMC"
+    },
+    {
+        "id": "pune_apmc",
+        "name": "Pune APMC",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "district": "Pune",
+        "state": "Maharashtra",
+        "type": "APMC"
+    },
+    {
+        "id": "indore_mandi",
+        "name": "Indore Mandi",
+        "lat": 22.7196,
+        "lng": 75.8577,
+        "district": "Indore",
+        "state": "Madhya Pradesh",
+        "type": "APMC"
+    },
+    {
+        "id": "bhopal_apmc",
+        "name": "Bhopal APMC",
+        "lat": 23.2599,
+        "lng": 77.4126,
+        "district": "Bhopal",
+        "state": "Madhya Pradesh",
+        "type": "APMC"
+    },
+    {
+        "id": "lucknow_mandi",
+        "name": "Lucknow Mandi",
+        "lat": 26.8467,
+        "lng": 80.9462,
+        "district": "Lucknow",
+        "state": "Uttar Pradesh",
+        "type": "APMC"
+    },
+    {
+        "id": "patna_apmc",
+        "name": "Patna APMC",
+        "lat": 25.6093,
+        "lng": 85.1376,
+        "district": "Patna",
+        "state": "Bihar",
+        "type": "APMC"
+    },
+    {
+        "id": "hyderabad_bowenpally",
+        "name": "Hyderabad (Bowenpally)",
+        "lat": 17.4725,
+        "lng": 78.4801,
+        "district": "Hyderabad",
+        "state": "Telangana",
+        "type": "APMC"
+    },
+    {
+        "id": "visakhapatnam_apmc",
+        "name": "Visakhapatnam APMC",
+        "lat": 17.6868,
+        "lng": 83.2185,
+        "district": "Visakhapatnam",
+        "state": "Andhra Pradesh",
+        "type": "APMC"
+    },
+    {
+        "id": "kolkata_mandi",
+        "name": "Kolkata Mandi (Burrabazar)",
+        "lat": 22.5726,
+        "lng": 88.3639,
+        "district": "Kolkata",
+        "state": "West Bengal",
+        "type": "APMC"
+    },
+    {
+        "id": "siliguri_mandi",
+        "name": "Siliguri Mandi",
+        "lat": 26.7271,
+        "lng": 88.3953,
+        "district": "Darjeeling",
+        "state": "West Bengal",
+        "type": "APMC"
+    },
+    {
+        "id": "nagpur_private",
+        "name": "Nagpur Private Market (Kalamna)",
+        "lat": 21.1300,
+        "lng": 79.1100,
+        "district": "Nagpur",
+        "state": "Maharashtra",
+        "type": "private"
+    },
+    {
+        "id": "pune_private",
+        "name": "Pune Private Market (Gultekdi)",
+        "lat": 18.4950,
+        "lng": 73.8700,
+        "district": "Pune",
+        "state": "Maharashtra",
+        "type": "private"
+    },
+    {
+        "id": "indore_private",
+        "name": "Indore Private Market (Dewas Naka)",
+        "lat": 22.7400,
+        "lng": 75.8800,
+        "district": "Indore",
+        "state": "Madhya Pradesh",
+        "type": "private"
+    }
+]

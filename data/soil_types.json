@@ -1,0 +1,160 @@
+[
+    {
+        "id": "black",
+        "name_en": "Black Soil (Regur)",
+        "name_hi": "काली मिट्टी (रेगुर)",
+        "icon": "⬛",
+        "description_en": "Rich in calcium, magnesium, potassium, and iron. Found in the Deccan Plateau — Maharashtra, Madhya Pradesh, Gujarat, and parts of Andhra Pradesh. Highly moisture-retentive and swells when wet. Excellent for cotton, soybean, wheat, and sugarcane.",
+        "description_hi": "कैल्शियम, मैग्नीशियम, पोटेशियम और लोहे से भरपूर। दक्कन के पठार — महाराष्ट्र, मध्य प्रदेश, गुजरात और आंध्र प्रदेश के कुछ भागों में पाई जाती है। नमी को अधिक सोखती है और गीली होने पर फूल जाती है। कपास, सोयाबीन, गेहूँ और गन्ने के लिए उत्कृष्ट।",
+        "water_retention": "high",
+        "fertility": "high",
+        "suitable_crops": [
+            "cotton",
+            "soybean",
+            "wheat",
+            "sugarcane",
+            "jowar",
+            "chana"
+        ],
+        "moisture_factor": 1.2,
+        "color_hex": "#2C2C2C",
+        "regions": [
+            "Maharashtra",
+            "Madhya Pradesh",
+            "Gujarat",
+            "Andhra Pradesh",
+            "Karnataka"
+        ]
+    },
+    {
+        "id": "alluvial",
+        "name_en": "Alluvial Soil",
+        "name_hi": "जलोढ़ मिट्टी",
+        "icon": "🟫",
+        "description_en": "Deposited by rivers. Found in the Indo-Gangetic Plain — Uttar Pradesh, Bihar, Punjab, Haryana, and West Bengal. Very fertile, rich in potash but poor in phosphorus. Ideal for rice, wheat, sugarcane, and vegetables.",
+        "description_hi": "नदियों द्वारा जमा की गई। सिंधु-गंगा मैदान — उत्तर प्रदेश, बिहार, पंजाब, हरियाणा और पश्चिम बंगाल में पाई जाती है। बहुत उपजाऊ, पोटाश में समृद्ध लेकिन फास्फोरस में कमी। चावल, गेहूँ, गन्ना और सब्जियों के लिए आदर्श।",
+        "water_retention": "medium",
+        "fertility": "very_high",
+        "suitable_crops": [
+            "rice",
+            "wheat",
+            "sugarcane",
+            "maize",
+            "potato",
+            "banana"
+        ],
+        "moisture_factor": 1.0,
+        "color_hex": "#8B7355",
+        "regions": [
+            "Uttar Pradesh",
+            "Bihar",
+            "Punjab",
+            "Haryana",
+            "West Bengal",
+            "Assam"
+        ]
+    },
+    {
+        "id": "red",
+        "name_en": "Red Soil",
+        "name_hi": "लाल मिट्टी",
+        "icon": "🟥",
+        "description_en": "Formed from weathering of crystalline and metamorphic rocks. Found in Tamil Nadu, Karnataka, Odisha, and Jharkhand. Rich in iron oxide giving it a red color. Low in nitrogen, phosphorus and humus. Suitable for millets, groundnut, and pulses with proper irrigation.",
+        "description_hi": "क्रिस्टलीय और कायांतरित चट्टानों के अपक्षय से बनती है। तमिलनाडु, कर्नाटक, ओडिशा और झारखंड में पाई जाती है। लोहे के ऑक्साइड से समृद्ध जो इसे लाल रंग देता है। नाइट्रोजन, फास्फोरस और ह्यूमस में कमी। उचित सिंचाई के साथ बाजरा, मूंगफली और दालों के लिए उपयुक्त।",
+        "water_retention": "low",
+        "fertility": "medium",
+        "suitable_crops": [
+            "bajra",
+            "jowar",
+            "groundnut",
+            "toor",
+            "moong",
+            "tobacco"
+        ],
+        "moisture_factor": 0.7,
+        "color_hex": "#C0392B",
+        "regions": [
+            "Tamil Nadu",
+            "Karnataka",
+            "Odisha",
+            "Jharkhand",
+            "Chhattisgarh"
+        ]
+    },
+    {
+        "id": "laterite",
+        "name_en": "Laterite Soil",
+        "name_hi": "लैटेराइट मिट्टी",
+        "icon": "🧱",
+        "description_en": "Formed under high temperature and heavy rainfall conditions. Found in Kerala, Karnataka coast, and North-Eastern states. Rich in iron and aluminium but poor in nitrogen and potash. Suitable for tea, coffee, cashew, and rubber with manuring.",
+        "description_hi": "उच्च तापमान और भारी वर्षा की स्थिति में बनती है। केरल, कर्नाटक तट और पूर्वोत्तर राज्यों में पाई जाती है। लोहे और एल्यूमीनियम में समृद्ध लेकिन नाइट्रोजन और पोटाश में कमी। खाद के साथ चाय, कॉफी, काजू और रबर के लिए उपयुक्त।",
+        "water_retention": "low",
+        "fertility": "low",
+        "suitable_crops": [
+            "tea",
+            "coffee",
+            "cashew",
+            "rubber",
+            "coconut"
+        ],
+        "moisture_factor": 0.6,
+        "color_hex": "#E74C3C",
+        "regions": [
+            "Kerala",
+            "Karnataka",
+            "Goa",
+            "Meghalaya",
+            "Assam"
+        ]
+    },
+    {
+        "id": "sandy",
+        "name_en": "Sandy Soil (Desert)",
+        "name_hi": "बालू मिट्टी (रेतीली)",
+        "icon": "🏜️",
+        "description_en": "Predominantly found in Rajasthan and parts of Gujarat. Low in moisture, nitrogen, and organic matter. Sandy texture with poor water retention. Suitable for drought-resistant crops like bajra, guar, and dates with drip irrigation.",
+        "description_hi": "मुख्य रूप से राजस्थान और गुजरात के कुछ भागों में पाई जाती है। नमी, नाइट्रोजन और कार्बनिक पदार्थ में कमी। रेतीली बनावट और कम जल धारण क्षमता। ड्रिप सिंचाई के साथ बाजरा, ग्वार और खजूर जैसी सूखा-प्रतिरोधी फसलों के लिए उपयुक्त।",
+        "water_retention": "very_low",
+        "fertility": "low",
+        "suitable_crops": [
+            "bajra",
+            "guar",
+            "date_palm",
+            "cumin",
+            "mustard"
+        ],
+        "moisture_factor": 0.4,
+        "color_hex": "#F5DEB3",
+        "regions": [
+            "Rajasthan",
+            "Gujarat",
+            "Haryana (south)"
+        ]
+    },
+    {
+        "id": "clayey",
+        "name_en": "Clayey Soil",
+        "name_hi": "चिकनी मिट्टी (मटियार)",
+        "icon": "🟤",
+        "description_en": "Fine-grained soil with high water retention capacity. Found in low-lying areas across various states. Rich in organic matter and nutrients. Can become waterlogged. Excellent for rice (paddy) cultivation and also supports wheat and jute.",
+        "description_hi": "उच्च जल धारण क्षमता वाली बारीक दानेदार मिट्टी। विभिन्न राज्यों के निचले इलाकों में पाई जाती है। कार्बनिक पदार्थ और पोषक तत्वों से भरपूर। जलभराव हो सकता है। चावल (धान) की खेती के लिए उत्कृष्ट और गेहूँ व जूट के लिए भी उपयुक्त।",
+        "water_retention": "very_high",
+        "fertility": "high",
+        "suitable_crops": [
+            "rice",
+            "wheat",
+            "jute",
+            "sugarcane",
+            "banana"
+        ],
+        "moisture_factor": 1.4,
+        "color_hex": "#6B4226",
+        "regions": [
+            "West Bengal",
+            "Bihar",
+            "Odisha",
+            "Kerala",
+            "Tamil Nadu"
+        ]
+    }
+]

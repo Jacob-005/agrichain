@@ -1,0 +1,252 @@
+{
+    "tomato": {
+        "spoilage_rate_per_degree_above_35": 0.08,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 72,
+                "25_to_35": 48,
+                "above_35": 24
+            },
+            "jute_bags": {
+                "below_25": 96,
+                "25_to_35": 60,
+                "above_35": 30
+            },
+            "plastic_crates": {
+                "below_25": 120,
+                "25_to_35": 84,
+                "above_35": 48
+            },
+            "cold_storage": {
+                "below_25": 336,
+                "25_to_35": 336,
+                "above_35": 240
+            }
+        }
+    },
+    "onion": {
+        "spoilage_rate_per_degree_above_35": 0.03,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 720,
+                "25_to_35": 480,
+                "above_35": 240
+            },
+            "jute_bags": {
+                "below_25": 840,
+                "25_to_35": 600,
+                "above_35": 360
+            },
+            "plastic_crates": {
+                "below_25": 960,
+                "25_to_35": 720,
+                "above_35": 480
+            },
+            "cold_storage": {
+                "below_25": 960,
+                "25_to_35": 960,
+                "above_35": 720
+            }
+        }
+    },
+    "potato": {
+        "spoilage_rate_per_degree_above_35": 0.04,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 360,
+                "25_to_35": 168,
+                "above_35": 96
+            },
+            "jute_bags": {
+                "below_25": 480,
+                "25_to_35": 240,
+                "above_35": 120
+            },
+            "plastic_crates": {
+                "below_25": 720,
+                "25_to_35": 360,
+                "above_35": 168
+            },
+            "cold_storage": {
+                "below_25": 2160,
+                "25_to_35": 2160,
+                "above_35": 1440
+            }
+        }
+    },
+    "banana": {
+        "spoilage_rate_per_degree_above_35": 0.10,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 72,
+                "25_to_35": 48,
+                "above_35": 24
+            },
+            "jute_bags": {
+                "below_25": 96,
+                "25_to_35": 60,
+                "above_35": 30
+            },
+            "plastic_crates": {
+                "below_25": 120,
+                "25_to_35": 84,
+                "above_35": 36
+            },
+            "cold_storage": {
+                "below_25": 168,
+                "25_to_35": 168,
+                "above_35": 120
+            }
+        }
+    },
+    "mango": {
+        "spoilage_rate_per_degree_above_35": 0.07,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 96,
+                "25_to_35": 72,
+                "above_35": 48
+            },
+            "jute_bags": {
+                "below_25": 120,
+                "25_to_35": 84,
+                "above_35": 60
+            },
+            "plastic_crates": {
+                "below_25": 168,
+                "25_to_35": 120,
+                "above_35": 72
+            },
+            "cold_storage": {
+                "below_25": 240,
+                "25_to_35": 240,
+                "above_35": 168
+            }
+        }
+    },
+    "rice": {
+        "spoilage_rate_per_degree_above_35": 0.01,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 6480,
+                "25_to_35": 5760,
+                "above_35": 4320
+            },
+            "jute_bags": {
+                "below_25": 7200,
+                "25_to_35": 6480,
+                "above_35": 5040
+            },
+            "plastic_crates": {
+                "below_25": 7920,
+                "25_to_35": 7200,
+                "above_35": 5760
+            },
+            "cold_storage": {
+                "below_25": 8760,
+                "25_to_35": 8760,
+                "above_35": 7200
+            }
+        }
+    },
+    "wheat": {
+        "spoilage_rate_per_degree_above_35": 0.01,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 6480,
+                "25_to_35": 5760,
+                "above_35": 4320
+            },
+            "jute_bags": {
+                "below_25": 7200,
+                "25_to_35": 6480,
+                "above_35": 5040
+            },
+            "plastic_crates": {
+                "below_25": 7920,
+                "25_to_35": 7200,
+                "above_35": 5760
+            },
+            "cold_storage": {
+                "below_25": 8760,
+                "25_to_35": 8760,
+                "above_35": 7200
+            }
+        }
+    },
+    "chana": {
+        "spoilage_rate_per_degree_above_35": 0.02,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 4320,
+                "25_to_35": 3600,
+                "above_35": 2880
+            },
+            "jute_bags": {
+                "below_25": 5040,
+                "25_to_35": 4320,
+                "above_35": 3600
+            },
+            "plastic_crates": {
+                "below_25": 5760,
+                "25_to_35": 5040,
+                "above_35": 4320
+            },
+            "cold_storage": {
+                "below_25": 7200,
+                "25_to_35": 7200,
+                "above_35": 5760
+            }
+        }
+    },
+    "cauliflower": {
+        "spoilage_rate_per_degree_above_35": 0.12,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 48,
+                "25_to_35": 24,
+                "above_35": 12
+            },
+            "jute_bags": {
+                "below_25": 60,
+                "25_to_35": 36,
+                "above_35": 18
+            },
+            "plastic_crates": {
+                "below_25": 84,
+                "25_to_35": 48,
+                "above_35": 24
+            },
+            "cold_storage": {
+                "below_25": 168,
+                "25_to_35": 168,
+                "above_35": 96
+            }
+        }
+    },
+    "grapes": {
+        "spoilage_rate_per_degree_above_35": 0.09,
+        "storage_methods": {
+            "open_floor": {
+                "below_25": 48,
+                "25_to_35": 24,
+                "above_35": 12
+            },
+            "jute_bags": {
+                "below_25": 72,
+                "25_to_35": 36,
+                "above_35": 18
+            },
+            "plastic_crates": {
+                "below_25": 120,
+                "25_to_35": 72,
+                "above_35": 36
+            },
+            "cold_storage": {
+                "below_25": 480,
+                "25_to_35": 360,
+                "above_35": 240
+            }
+        }
+    }
+}

@@ -263,7 +263,17 @@ class ApiService {
         'recommendation': 'Good time to harvest. Market prices are favourable.',
         'recommendation_hi':
             'फसल काटने का अच्छा समय है। बाजार भाव अनुकूल हैं।',
-        'status': 'good', // good | caution | danger
+        'status': 'good',
+        'explanation':
+            'Weather conditions are favorable with no rain expected for 5 days. '
+            'Soil moisture is at optimal level (72%). '
+            'Market prices at nearby mandis are 12% above average. '
+            'Harvesting now will maximize your returns before prices dip next week.',
+        'explanation_hi':
+            'मौसम अनुकूल है, 5 दिनों तक बारिश की संभावना नहीं। '
+            'मिट्टी की नमी सही स्तर (72%) पर है। '
+            'नजदीकी मंडियों में भाव औसत से 12% ऊपर हैं। '
+            'अभी कटाई करने पर अगले हफ्ते भाव गिरने से पहले अधिकतम लाभ मिलेगा।',
       });
     }
     return _get('/harvest-score?crop=$crop');
@@ -275,39 +285,73 @@ class ApiService {
       String crop, double volumeKg) async {
     if (useMock) {
       await Future.delayed(const Duration(milliseconds: 400));
+      // CRITICAL: Rank 1 has LOWER price/kg but HIGHEST pocket_cash
+      final wardhaRevenue = volumeKg * 15;
+      final wardhaFuel = 192.0;
+      final wardhaSpoilage = volumeKg * 0.02 * 15; // 2% spoilage
+      final wardhaPocket = wardhaRevenue - wardhaFuel - wardhaSpoilage;
+
+      final amravatiRevenue = volumeKg * 22;
+      final amravatiFuel = 2400.0;
+      final amravatiSpoilage = volumeKg * 0.12 * 22; // 12% spoilage
+      final amravatiPocket = amravatiRevenue - amravatiFuel - amravatiSpoilage;
+
+      final nagpurRevenue = volumeKg * 18;
+      final nagpurFuel = 720.0;
+      final nagpurSpoilage = volumeKg * 0.08 * 18; // 8% spoilage
+      final nagpurPocket = nagpurRevenue - nagpurFuel - nagpurSpoilage;
+
       return ApiResult.success({
         'crop': crop,
         'volume_kg': volumeKg,
         'mandis': [
           {
-            'name': 'Nagpur APMC',
-            'distance_km': 12,
-            'price_per_kg': 25.5,
-            'total_revenue': volumeKg * 25.5,
-            'transport_cost': 500,
-            'net_profit': (volumeKg * 25.5) - 500,
-            'demand': 'high',
-          },
-          {
+            'rank': 1,
             'name': 'Wardha Mandi',
-            'distance_km': 78,
-            'price_per_kg': 28.0,
-            'total_revenue': volumeKg * 28.0,
-            'transport_cost': 1500,
-            'net_profit': (volumeKg * 28.0) - 1500,
-            'demand': 'medium',
+            'distance_km': 12,
+            'price_per_kg': 15,
+            'fuel_cost': wardhaFuel,
+            'spoilage_loss': wardhaSpoilage,
+            'spoilage_pct': 2,
+            'pocket_cash': wardhaPocket,
+            'risk_level': 'low',
+            'demand': 'high',
+            'explanation':
+                'Closest mandi with minimal transport cost (₹${wardhaFuel.toStringAsFixed(0)}) '
+                'and only 2% spoilage. Lower per-kg price is offset by savings.',
           },
           {
+            'rank': 2,
             'name': 'Amravati Market',
-            'distance_km': 155,
-            'price_per_kg': 30.0,
-            'total_revenue': volumeKg * 30.0,
-            'transport_cost': 3000,
-            'net_profit': (volumeKg * 30.0) - 3000,
+            'distance_km': 150,
+            'price_per_kg': 22,
+            'fuel_cost': amravatiFuel,
+            'spoilage_loss': amravatiSpoilage,
+            'spoilage_pct': 12,
+            'pocket_cash': amravatiPocket,
+            'risk_level': 'high',
+            'demand': 'medium',
+            'explanation':
+                'Higher price per kg but 150km distance causes ₹${amravatiFuel.toStringAsFixed(0)} fuel '
+                'and 12% spoilage loss. Net return is lower despite better price.',
+          },
+          {
+            'rank': 3,
+            'name': 'Nagpur APMC',
+            'distance_km': 45,
+            'price_per_kg': 18,
+            'fuel_cost': nagpurFuel,
+            'spoilage_loss': nagpurSpoilage,
+            'spoilage_pct': 8,
+            'pocket_cash': nagpurPocket,
+            'risk_level': 'medium',
             'demand': 'low',
+            'explanation':
+                'Medium distance but low demand today. 8% spoilage risk '
+                'and moderate transport costs reduce your net take-home.',
           },
         ],
-        'best_option': 'Nagpur APMC',
+        'best_option': 'Wardha Mandi',
       });
     }
     return _get('/market/compare?crop=$crop&volume_kg=$volumeKg');

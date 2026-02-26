@@ -1,0 +1,76 @@
+{
+  "categories": [
+    {
+      "name": "vegetables",
+      "crops": [
+        { "id": "tomato", "name_en": "Tomato", "name_hi": "टमाटर", "icon": "🍅", "category": "vegetables" },
+        { "id": "onion", "name_en": "Onion", "name_hi": "प्याज", "icon": "🧅", "category": "vegetables" },
+        { "id": "potato", "name_en": "Potato", "name_hi": "आलू", "icon": "🥔", "category": "vegetables" },
+        { "id": "brinjal", "name_en": "Brinjal", "name_hi": "बैंगन", "icon": "🍆", "category": "vegetables" },
+        { "id": "cauliflower", "name_en": "Cauliflower", "name_hi": "फूलगोभी", "icon": "🥦", "category": "vegetables" },
+        { "id": "cabbage", "name_en": "Cabbage", "name_hi": "पत्तागोभी", "icon": "🥬", "category": "vegetables" },
+        { "id": "okra", "name_en": "Okra (Bhindi)", "name_hi": "भिंडी", "icon": "🫛", "category": "vegetables" },
+        { "id": "green_chili", "name_en": "Green Chili", "name_hi": "हरी मिर्च", "icon": "🌶️", "category": "vegetables" }
+      ]
+    },
+    {
+      "name": "fruits",
+      "crops": [
+        { "id": "mango", "name_en": "Mango", "name_hi": "आम", "icon": "🥭", "category": "fruits" },
+        { "id": "banana", "name_en": "Banana", "name_hi": "केला", "icon": "🍌", "category": "fruits" },
+        { "id": "guava", "name_en": "Guava", "name_hi": "अमरूद", "icon": "🍈", "category": "fruits" },
+        { "id": "papaya", "name_en": "Papaya", "name_hi": "पपीता", "icon": "🍈", "category": "fruits" },
+        { "id": "pomegranate", "name_en": "Pomegranate", "name_hi": "अनार", "icon": "🍎", "category": "fruits" },
+        { "id": "grapes", "name_en": "Grapes", "name_hi": "अंगूर", "icon": "🍇", "category": "fruits" }
+      ]
+    },
+    {
+      "name": "grains",
+      "crops": [
+        { "id": "rice", "name_en": "Rice", "name_hi": "चावल", "icon": "🌾", "category": "grains" },
+        { "id": "wheat", "name_en": "Wheat", "name_hi": "गेहूँ", "icon": "🌾", "category": "grains" },
+        { "id": "maize", "name_en": "Maize (Corn)", "name_hi": "मक्का", "icon": "🌽", "category": "grains" },
+        { "id": "bajra", "name_en": "Bajra (Pearl Millet)", "name_hi": "बाजरा", "icon": "🌾", "category": "grains" },
+        { "id": "jowar", "name_en": "Jowar (Sorghum)", "name_hi": "ज्वार", "icon": "🌾", "category": "grains" }
+      ]
+    },
+    {
+      "name": "pulses",
+      "crops": [
+        { "id": "chana", "name_en": "Chana (Chickpea)", "name_hi": "चना", "icon": "🫘", "category": "pulses" },
+        { "id": "toor", "name_en": "Toor (Pigeon Pea)", "name_hi": "तूर दाल", "icon": "🫘", "category": "pulses" },
+        { "id": "moong", "name_en": "Moong (Green Gram)", "name_hi": "मूंग", "icon": "🫘", "category": "pulses" },
+        { "id": "urad", "name_en": "Urad (Black Gram)", "name_hi": "उड़द", "icon": "🫘", "category": "pulses" },
+        { "id": "masoor", "name_en": "Masoor (Red Lentil)", "name_hi": "मसूर", "icon": "🫘", "category": "pulses" }
+      ]
+    },
+    {
+      "name": "spices",
+      "crops": [
+        { "id": "turmeric", "name_en": "Turmeric", "name_hi": "हल्दी", "icon": "🟡", "category": "spices" },
+        { "id": "ginger", "name_en": "Ginger", "name_hi": "अदरक", "icon": "🫚", "category": "spices" },
+        { "id": "chili_dry", "name_en": "Chili (Dry)", "name_hi": "सूखी मिर्च", "icon": "🌶️", "category": "spices" },
+        { "id": "coriander", "name_en": "Coriander", "name_hi": "धनिया", "icon": "🌿", "category": "spices" },
+        { "id": "cumin", "name_en": "Cumin", "name_hi": "जीरा", "icon": "🟤", "category": "spices" }
+      ]
+    },
+    {
+      "name": "cash_crops",
+      "crops": [
+        { "id": "cotton", "name_en": "Cotton", "name_hi": "कपास", "icon": "☁️", "category": "cash_crops" },
+        { "id": "sugarcane", "name_en": "Sugarcane", "name_hi": "गन्ना", "icon": "🎋", "category": "cash_crops" },
+        { "id": "tobacco", "name_en": "Tobacco", "name_hi": "तम्बाकू", "icon": "🍂", "category": "cash_crops" },
+        { "id": "jute", "name_en": "Jute", "name_hi": "जूट", "icon": "🧵", "category": "cash_crops" }
+      ]
+    },
+    {
+      "name": "medicinal",
+      "crops": [
+        { "id": "ashwagandha", "name_en": "Ashwagandha", "name_hi": "अश्वगंधा", "icon": "🌱", "category": "medicinal" },
+        { "id": "tulsi", "name_en": "Tulsi (Holy Basil)", "name_hi": "तुलसी", "icon": "🌿", "category": "medicinal" },
+        { "id": "aloe_vera", "name_en": "Aloe Vera", "name_hi": "एलोवेरा", "icon": "🪴", "category": "medicinal" },
+        { "id": "neem", "name_en": "Neem", "name_hi": "नीम", "icon": "🌳", "category": "medicinal" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+    "tomato": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 1,
+            "saves_rupees": 200,
+            "instructions_en": "Step 1: Soak jute bags in clean water for 10 minutes. Step 2: Wring out excess water. Step 3: Cover the entire tomato pile evenly. Step 4: Re-wet the jute bags every 6 hours to maintain cooling effect.",
+            "instructions_hi": "चरण 1: जूट की बोरियों को 10 मिनट तक साफ पानी में भिगोएं। चरण 2: अतिरिक्त पानी निचोड़ लें। चरण 3: पूरे टमाटर के ढेर को समान रूप से ढकें। चरण 4: ठंडक बनाए रखने के लिए हर 6 घंटे में बोरियों को फिर से गीला करें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates",
+            "name_hi": "हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 35,
+            "extra_days": 2,
+            "saves_rupees": 500,
+            "instructions_en": "Step 1: Sort tomatoes — remove bruised or damaged ones. Step 2: Place single layer of tomatoes in ventilated plastic crates. Step 3: Stack crates with gaps for air circulation. Step 4: Store in shade, away from direct sunlight.",
+            "instructions_hi": "चरण 1: टमाटरों को छाँटें — कटे या खराब टमाटर हटाएं। चरण 2: हवादार प्लास्टिक के क्रेट में एक परत में टमाटर रखें। चरण 3: हवा के आने-जाने के लिए क्रेट को गैप के साथ एक के ऊपर एक रखें। चरण 4: सीधी धूप से दूर छाया में रखें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "zecc",
+            "name_en": "Zero Energy Cool Chamber (ZECC)",
+            "name_hi": "शून्य ऊर्जा शीतलन कक्ष (ZECC)",
+            "level": 3,
+            "cost_rupees": 100,
+            "extra_days": 5,
+            "saves_rupees": 1200,
+            "instructions_en": "Step 1: Build a double-walled brick structure with wet sand between walls. Step 2: Place tomatoes inside on shelves. Step 3: Wet the sand twice daily (morning and evening). Step 4: Cover the top with wet jute cloth. Chamber maintains 10-15°C below ambient temperature.",
+            "instructions_hi": "चरण 1: दो दीवारों के बीच गीली रेत भरकर ईंट का ढांचा बनाएं। चरण 2: अंदर अलमारियों पर टमाटर रखें। चरण 3: रेत को दिन में दो बार (सुबह और शाम) गीला करें। चरण 4: ऊपर गीले जूट के कपड़े से ढकें। कक्ष बाहरी तापमान से 10-15°C कम तापमान बनाए रखता है।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "onion": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 2,
+            "saves_rupees": 150,
+            "instructions_en": "Step 1: Cure onions by drying in shade for 3-4 days before storage. Step 2: Spread on dry floor. Step 3: Cover with damp jute bags. Step 4: Re-wet bags daily. Keep in well-ventilated area.",
+            "instructions_hi": "चरण 1: भंडारण से पहले प्याज को 3-4 दिन छाया में सुखाकर तैयार करें। चरण 2: सूखे फर्श पर फैलाएं। चरण 3: नम जूट की बोरियों से ढकें। चरण 4: बोरियों को रोजाना गीला करें। हवादार जगह पर रखें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates",
+            "name_hi": "हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 30,
+            "extra_days": 5,
+            "saves_rupees": 400,
+            "instructions_en": "Step 1: Remove damaged onions. Step 2: Fill crates loosely — do not pack tight. Step 3: Stack crates with 10cm gaps. Step 4: Store in cool, dry, well-ventilated shed.",
+            "instructions_hi": "चरण 1: खराब प्याज हटाएं। चरण 2: क्रेट में ढीले भरें — कसकर न भरें। चरण 3: 10 सेमी गैप के साथ क्रेट रखें। चरण 4: ठंडे, सूखे, हवादार शेड में रखें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "hanging_storage",
+            "name_en": "Traditional Hanging Storage (Chaal)",
+            "name_hi": "पारंपरिक लटकाकर भंडारण (छाल)",
+            "level": 3,
+            "cost_rupees": 50,
+            "extra_days": 10,
+            "saves_rupees": 800,
+            "instructions_en": "Step 1: Tie onions in bundles using their stalks. Step 2: Hang bundles from bamboo poles or ropes in a covered, airy space. Step 3: Ensure no bundles touch each other. Step 4: Remove sprouting or rotting onions weekly.",
+            "instructions_hi": "चरण 1: प्याज को उनके डंठलों से बांधकर गुच्छे बनाएं। चरण 2: ढके हुए हवादार स्थान में बांस या रस्सियों से लटकाएं। चरण 3: सुनिश्चित करें कि गुच्छे एक-दूसरे को न छुएं। चरण 4: साप्ताहिक रूप से अंकुरित या सड़े प्याज हटाएं।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "potato": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 3,
+            "saves_rupees": 250,
+            "instructions_en": "Step 1: Spread potatoes in a single layer in a dark room. Step 2: Cover with damp jute bags. Step 3: Ensure room is dark (light causes greening). Step 4: Re-wet bags daily and check for sprouting.",
+            "instructions_hi": "चरण 1: अंधेरे कमरे में आलू एक परत में फैलाएं। चरण 2: नम जूट की बोरियों से ढकें। चरण 3: सुनिश्चित करें कि कमरा अंधेरा हो (रोशनी से हरापन आता है)। चरण 4: बोरियों को रोजाना गीला करें और अंकुरण की जांच करें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates in Dark Room",
+            "name_hi": "अंधेरे कमरे में हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 40,
+            "extra_days": 7,
+            "saves_rupees": 600,
+            "instructions_en": "Step 1: Sort and remove damaged potatoes. Step 2: Place in ventilated crates with gaps. Step 3: Store in dark, cool room. Step 4: Check weekly for sprouts and green spots.",
+            "instructions_hi": "चरण 1: खराब आलू छाँटकर हटाएं। चरण 2: हवादार क्रेट में गैप के साथ रखें। चरण 3: अंधेरे, ठंडे कमरे में रखें। चरण 4: साप्ताहिक रूप से अंकुरण और हरे धब्बों की जांच करें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "zecc",
+            "name_en": "Zero Energy Cool Chamber (ZECC)",
+            "name_hi": "शून्य ऊर्जा शीतलन कक्ष (ZECC)",
+            "level": 3,
+            "cost_rupees": 100,
+            "extra_days": 15,
+            "saves_rupees": 1500,
+            "instructions_en": "Step 1: Build double-walled brick structure with wet sand filling. Step 2: Place potatoes inside in crates or on shelves. Step 3: Keep top covered with wet jute. Step 4: Wet the sand twice daily. Maintains darkness and low temperature.",
+            "instructions_hi": "चरण 1: गीली रेत भरकर दोहरी दीवार वाला ईंट का ढांचा बनाएं। चरण 2: अंदर क्रेट या अलमारियों पर आलू रखें। चरण 3: ऊपर गीले जूट से ढकें। चरण 4: रेत को दिन में दो बार गीला करें। अंधेरा और कम तापमान बनाए रखता है।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "banana": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 1,
+            "saves_rupees": 180,
+            "instructions_en": "Step 1: Keep banana bunches intact — do not separate. Step 2: Wrap loosely with damp jute cloth. Step 3: Place in shaded area with good airflow. Step 4: Re-wet cloth every 4-6 hours.",
+            "instructions_hi": "चरण 1: केले के गुच्छे बरकरार रखें — अलग न करें। चरण 2: नम जूट के कपड़े से ढीले ढंग से लपेटें। चरण 3: अच्छी हवा वाले छायादार स्थान पर रखें। चरण 4: हर 4-6 घंटे में कपड़ा फिर से गीला करें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates with Newspaper",
+            "name_hi": "अखबार के साथ हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 25,
+            "extra_days": 2,
+            "saves_rupees": 400,
+            "instructions_en": "Step 1: Separate banana hands carefully. Step 2: Wrap each hand in newspaper. Step 3: Place in ventilated plastic crates — single layer. Step 4: Store in cool, dark place. Do not stack heavy items on top.",
+            "instructions_hi": "चरण 1: केले के हाथों को सावधानी से अलग करें। चरण 2: प्रत्येक हाथ को अखबार में लपेटें। चरण 3: हवादार प्लास्टिक के क्रेट में एक परत में रखें। चरण 4: ठंडी, अंधेरी जगह पर रखें। ऊपर भारी सामान न रखें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "zecc",
+            "name_en": "Zero Energy Cool Chamber (ZECC)",
+            "name_hi": "शून्य ऊर्जा शीतलन कक्ष (ZECC)",
+            "level": 3,
+            "cost_rupees": 100,
+            "extra_days": 4,
+            "saves_rupees": 900,
+            "instructions_en": "Step 1: Build double-walled brick structure with wet sand. Step 2: Place banana bunches inside on clean surface. Step 3: Cover top with wet jute. Step 4: Wet sand twice daily. Slows ripening significantly.",
+            "instructions_hi": "चरण 1: गीली रेत के साथ दोहरी दीवार वाला ईंट का ढांचा बनाएं। चरण 2: साफ सतह पर अंदर केले के गुच्छे रखें। चरण 3: ऊपर गीले जूट से ढकें। चरण 4: रेत को दिन में दो बार गीला करें। पकने की प्रक्रिया काफी धीमी हो जाती है।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "mango": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 1,
+            "saves_rupees": 300,
+            "instructions_en": "Step 1: Sort mangoes by ripeness — keep unripe separate. Step 2: Place in single layers on straw bedding. Step 3: Cover with damp jute cloth. Step 4: Re-wet every 6 hours. Keep away from ethylene-producing fruits.",
+            "instructions_hi": "चरण 1: आम को पकने के अनुसार छाँटें — कच्चे अलग रखें। चरण 2: भूसे की बिछाई पर एक परत में रखें। चरण 3: नम जूट के कपड़े से ढकें। चरण 4: हर 6 घंटे में फिर से गीला करें। एथिलीन उत्पन्न करने वाले फलों से दूर रखें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates with Straw",
+            "name_hi": "भूसे के साथ हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 40,
+            "extra_days": 3,
+            "saves_rupees": 700,
+            "instructions_en": "Step 1: Wrap each mango individually in newspaper. Step 2: Place in ventilated crates with straw padding. Step 3: Single layer only — no stacking fruits. Step 4: Store in shade with air circulation.",
+            "instructions_hi": "चरण 1: प्रत्येक आम को व्यक्तिगत रूप से अखबार में लपेटें। चरण 2: भूसे की गद्दी के साथ हवादार क्रेट में रखें। चरण 3: केवल एक परत — फल एक पर एक न रखें। चरण 4: हवा के संचार के साथ छाया में रखें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "zecc",
+            "name_en": "Zero Energy Cool Chamber (ZECC)",
+            "name_hi": "शून्य ऊर्जा शीतलन कक्ष (ZECC)",
+            "level": 3,
+            "cost_rupees": 150,
+            "extra_days": 5,
+            "saves_rupees": 1500,
+            "instructions_en": "Step 1: Build ZECC with double-walled bricks and wet sand. Step 2: Place wrapped mangoes inside on shelves. Step 3: Keep top covered with wet jute. Step 4: Wet sand twice daily. Can extend shelf life by up to 5 days.",
+            "instructions_hi": "चरण 1: दोहरी दीवार वाली ईंटों और गीली रेत के साथ ZECC बनाएं। चरण 2: लिपटे हुए आमों को अलमारियों पर अंदर रखें। चरण 3: ऊपर गीले जूट से ढकें। चरण 4: रेत को दिन में दो बार गीला करें। शेल्फ लाइफ 5 दिन तक बढ़ा सकता है।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "cauliflower": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 1,
+            "saves_rupees": 150,
+            "instructions_en": "Step 1: Keep leaves attached to cauliflower heads for protection. Step 2: Sprinkle clean water on florets. Step 3: Cover with wet jute bags. Step 4: Re-wet every 4 hours — cauliflower wilts fast.",
+            "instructions_hi": "चरण 1: सुरक्षा के लिए फूलगोभी के सिर पर पत्तियां लगी रहने दें। चरण 2: फूलों पर साफ पानी छिड़कें। चरण 3: गीली जूट की बोरियों से ढकें। चरण 4: हर 4 घंटे में फिर से गीला करें — फूलगोभी जल्दी मुरझाती है।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates",
+            "name_hi": "हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 30,
+            "extra_days": 2,
+            "saves_rupees": 350,
+            "instructions_en": "Step 1: Trim outer damaged leaves but keep inner leaves. Step 2: Place stem-down in ventilated crates. Step 3: Do not stack — single layer. Step 4: Store in coolest available shade.",
+            "instructions_hi": "चरण 1: बाहरी खराब पत्तियां काटें लेकिन भीतरी पत्तियां रखें। चरण 2: हवादार क्रेट में डंठल नीचे करके रखें। चरण 3: एक के ऊपर एक न रखें — एक परत। चरण 4: सबसे ठंडी उपलब्ध छाया में रखें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "zecc",
+            "name_en": "Zero Energy Cool Chamber (ZECC)",
+            "name_hi": "शून्य ऊर्जा शीतलन कक्ष (ZECC)",
+            "level": 3,
+            "cost_rupees": 100,
+            "extra_days": 4,
+            "saves_rupees": 800,
+            "instructions_en": "Step 1: Build ZECC with wet sand walls. Step 2: Place cauliflower heads inside with leaves on. Step 3: Maintain high humidity by wetting sand regularly. Step 4: Check daily — remove any heads showing brown spots.",
+            "instructions_hi": "चरण 1: गीली रेत की दीवारों के साथ ZECC बनाएं। चरण 2: पत्तियों सहित फूलगोभी के सिर अंदर रखें। चरण 3: नियमित रूप से रेत गीली करके उच्च नमी बनाए रखें। चरण 4: रोजाना जांचें — भूरे धब्बे वाले सिर हटाएं।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ],
+    "grapes": [
+        {
+            "id": "wet_jute",
+            "name_en": "Wet Jute Bag Cover",
+            "name_hi": "गीली जूट की बोरी से ढकना",
+            "level": 1,
+            "cost_rupees": 0,
+            "extra_days": 1,
+            "saves_rupees": 200,
+            "instructions_en": "Step 1: Keep grape bunches on stems — do not pluck individual grapes. Step 2: Place on clean surface in shade. Step 3: Cover loosely with damp jute cloth. Step 4: Re-wet every 4 hours.",
+            "instructions_hi": "चरण 1: अंगूर के गुच्छे डंठलों पर रखें — अलग-अलग अंगूर न तोड़ें। चरण 2: छाया में साफ सतह पर रखें। चरण 3: नम जूट के कपड़े से ढीले ढंग से ढकें। चरण 4: हर 4 घंटे में फिर से गीला करें।",
+            "effectiveness": "basic",
+            "requires_purchase": false
+        },
+        {
+            "id": "plastic_crates",
+            "name_en": "Ventilated Plastic Crates with Paper Lining",
+            "name_hi": "कागज की लाइनिंग के साथ हवादार प्लास्टिक के क्रेट",
+            "level": 2,
+            "cost_rupees": 35,
+            "extra_days": 3,
+            "saves_rupees": 600,
+            "instructions_en": "Step 1: Line crates with clean newspaper. Step 2: Place grape bunches gently — avoid crushing. Step 3: Single layer only. Step 4: Store in cool, dry shade. Handle as little as possible.",
+            "instructions_hi": "चरण 1: क्रेट में साफ अखबार बिछाएं। चरण 2: अंगूर के गुच्छे धीरे से रखें — कुचलें नहीं। चरण 3: केवल एक परत। चरण 4: ठंडी, सूखी छाया में रखें। कम से कम छेड़ें।",
+            "effectiveness": "moderate",
+            "requires_purchase": true
+        },
+        {
+            "id": "sulfur_pads",
+            "name_en": "SO₂ Sulfur Pads Treatment",
+            "name_hi": "SO₂ सल्फर पैड उपचार",
+            "level": 3,
+            "cost_rupees": 120,
+            "extra_days": 10,
+            "saves_rupees": 2000,
+            "instructions_en": "Step 1: Purchase SO₂-generating pads from agricultural supply store. Step 2: Place grapes in clean plastic crates. Step 3: Place one sulfur pad per crate on top. Step 4: Seal crate loosely with plastic wrap. Prevents fungal growth significantly.",
+            "instructions_hi": "चरण 1: कृषि आपूर्ति दुकान से SO₂ उत्पन्न करने वाले पैड खरीदें। चरण 2: साफ प्लास्टिक के क्रेट में अंगूर रखें। चरण 3: प्रत्येक क्रेट के ऊपर एक सल्फर पैड रखें। चरण 4: क्रेट को प्लास्टिक रैप से ढीले ढंग से सील करें। फफूंद की वृद्धि को काफी रोकता है।",
+            "effectiveness": "high",
+            "requires_purchase": true
+        }
+    ]
+}

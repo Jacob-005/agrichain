@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../screens/onboarding/auth_screen.dart';
 import '../screens/onboarding/splash_screen.dart';
 import '../screens/onboarding/language_screen.dart';
 import '../screens/onboarding/otp_screen.dart';
@@ -25,8 +26,11 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/splash',
+  initialLocation: '/auth',
   routes: [
+    // ─── Auth (Login / Sign Up) ─────────────────────────────────────
+    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
+
     // ─── Onboarding (no bottom nav) ────────────────────────────────────
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(

@@ -17,52 +17,66 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkOnboardingAndNavigate();
+    // Defer so GoRouterState.of(context) is available after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkOnboardingAndNavigate();
+    });
   }
 
   Future<void> _checkOnboardingAndNavigate() async {
     final storage = ref.read(storageServiceProvider);
-    bool isComplete = false;
 
-    try {
-      // ── RESET: Clear ALL stored data so onboarding starts fresh ──
-      // Remove this block once testing is complete to let data persist.
-      await storage.clearAll();
-
-      isComplete = await storage.isOnboardingComplete();
-
-      // Restore persisted data into providers
-      if (isComplete) {
-        final profile = await storage.getUserProfile();
-        if (profile != null) {
-          ref
-              .read(userStateProvider.notifier)
-              .setProfile(name: profile['name'], phone: profile['phone']);
-          ref
-              .read(locationProvider.notifier)
-              .update(profile['district'], profile['lat'], profile['lng']);
-        }
-        final crops = await storage.getSelectedCrops();
-        if (crops != null && crops.isNotEmpty) {
-          ref.read(selectedCropsProvider.notifier).setCrops(crops);
-        }
-        final soil = await storage.getSoilType();
-        if (soil != null) {
-          ref.read(soilTypeProvider.notifier).state = soil;
-        }
-      }
-    } catch (e) {
-      // If restore fails, just proceed with defaults
-      debugPrint('Error restoring onboarding data: $e');
-    }
+    // Get mode from query param: 'login' or 'signup'
+    final uri = GoRouterState.of(context).uri;
+    final mode = uri.queryParameters['mode'] ?? 'signup';
 
     await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
 
-    if (isComplete) {
-      context.go('/home');
+    if (mode == 'login') {
+      // ── LOGIN: Check if user has completed onboarding before ──
+      try {
+        final isComplete = await storage.isOnboardingComplete();
+        if (isComplete) {
+          // Restore persisted data into providers
+          final profile = await storage.getUserProfile();
+          if (profile != null) {
+            ref
+                .read(userStateProvider.notifier)
+                .setProfile(name: profile['name'], phone: profile['phone']);
+            ref
+                .read(locationProvider.notifier)
+                .update(profile['district'], profile['lat'], profile['lng']);
+          }
+          final crops = await storage.getSelectedCrops();
+          if (crops != null && crops.isNotEmpty) {
+            ref.read(selectedCropsProvider.notifier).setCrops(crops);
+          }
+          final soil = await storage.getSoilType();
+          if (soil != null) {
+            ref.read(soilTypeProvider.notifier).state = soil;
+          }
+          final lang = await storage.getLanguage();
+          if (lang != null) {
+            ref.read(userStateProvider.notifier).setLanguage(lang);
+          }
+          if (mounted) context.go('/home');
+        } else {
+          // No prior onboarding — treat as new user, go OTP → onboarding
+          if (mounted) context.go('/language');
+        }
+      } catch (e) {
+        debugPrint('Login restore error: $e');
+        if (mounted) context.go('/language');
+      }
     } else {
-      context.go('/language');
+      // ── SIGN UP: Clear everything and start fresh onboarding ──
+      try {
+        await storage.clearAll();
+      } catch (e) {
+        debugPrint('Sign up clear error: $e');
+      }
+      if (mounted) context.go('/language');
     }
   }
 

@@ -1,9 +1,8 @@
+import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
-from sqlalchemy.orm import Session
 
-from backend.models.database import get_db
 from backend.config.cache import agent_cache
 from backend.config.stats import stats
 
@@ -26,12 +25,16 @@ class ChatRequest(BaseModel):
 
 @router.post("/")
 async def chat(req: ChatRequest):
-    """Chat with AgriChain orchestrator — routes to appropriate agent (cached)."""
+    """Chat with orchestrator — routes to agent (cached, timed, fallback)."""
+    start = time.time()
+
     cache_key = agent_cache.make_key("chat", req.message, req.crop)
     cached = agent_cache.get(cache_key)
     if cached:
         stats.record("chat", success=True, cached=True)
+        elapsed = round((time.time() - start) * 1000)
         cached["cached"] = True
+        cached["response_time_ms"] = elapsed
         return cached
 
     try:
@@ -58,18 +61,30 @@ async def chat(req: ChatRequest):
         formatted["data"]["intent"] = orch_result["intent"]
         formatted["data"]["agent_used"] = orch_result["agent_used"]
 
+        elapsed = round((time.time() - start) * 1000)
+        if elapsed > 10000:
+            print(f"⚠️ Chat slow: {elapsed}ms")
+
+        formatted["response_time_ms"] = elapsed
         agent_cache.set(cache_key, formatted)
         stats.record("chat", success=True)
         return formatted
+
     except Exception as e:
-        print(f"Chat endpoint error: {e}")
+        elapsed = round((time.time() - start) * 1000)
+        print(f"Chat fallback ({elapsed}ms): {e}")
         stats.record("chat", success=False)
         return {
             "success": True,
             "data": {
                 "intent": "harvest",
-                "response": "Your harvest score is 78 out of 100. Wait 2-3 days for better prices.",
-                "structured_data": None,
+                "agent_used": "harvest",
+                "type": "harvest_score",
+                "explanation_text": (
+                    "आपकी फसल का स्कोर 78/100 है। बाज़ार में अभी "
+                    "आपूर्ति अधिक है, कीमतें बढ़ने का इंतज़ार करें।"
+                ),
             },
             "fallback": True,
+            "response_time_ms": elapsed,
         }

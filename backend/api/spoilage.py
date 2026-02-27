@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -9,11 +10,19 @@ from backend.config.stats import stats
 
 router = APIRouter(prefix="/spoilage", tags=["spoilage"])
 
-FALLBACK_RESPONSE = {
-    "remaining_hours": 42.0, "remaining_days": 1.75,
-    "risk_level": "medium", "color": "yellow",
+FALLBACK_DATA = {
+    "type": "spoilage_timer",
+    "remaining_hours": 42.0,
+    "remaining_days": 1.8,
+    "color": "yellow",
+    "urgency": "attention",
     "has_weather_alert": False,
-    "explanation": "Your crop has approximately 42 hours of freshness remaining.",
+    "vibrate_phone": False,
+    "explanation_text": (
+        "आपकी फसल लगभग 42 घंटे (1.8 दिन) तक ताज़ा रहेगी। "
+        "24 घंटे के भीतर बेचने या भंडारण सुधारने पर विचार करें।"
+    ),
+    "show_voice_button": True,
 }
 
 
@@ -28,14 +37,18 @@ class SpoilageCheckRequest(BaseModel):
 
 @router.post("/check")
 async def spoilage_check(req: SpoilageCheckRequest, db: Session = Depends(get_db)):
-    """Check spoilage risk using AI agent (cached)."""
+    """Check spoilage using AI agent (cached, timed, with fallback)."""
+    start = time.time()
+
     cache_key = agent_cache.make_key(
         "spoilage", req.crop, req.storage_method, req.hours_since_harvest
     )
     cached = agent_cache.get(cache_key)
     if cached:
         stats.record("spoilage", success=True, cached=True)
+        elapsed = round((time.time() - start) * 1000)
         cached["cached"] = True
+        cached["response_time_ms"] = elapsed
         return cached
 
     try:
@@ -51,21 +64,55 @@ async def spoilage_check(req: SpoilageCheckRequest, db: Session = Depends(get_db
         formatted = format_spoilage_response(result["explanation"], req.model_dump())
 
         try:
-            entry = AdviceHistory(
+            db.add(AdviceHistory(
                 id=generate_uuid(), user_id="demo-user",
                 type="spoilage", recommendation=result["explanation"][:500],
                 savings_rupees=300,
-            )
-            db.add(entry)
+            ))
             db.commit()
         except Exception:
             db.rollback()
 
-        response = {"success": True, "data": formatted}
+        elapsed = round((time.time() - start) * 1000)
+        if elapsed > 10000:
+            print(f"⚠️ Spoilage slow: {elapsed}ms")
+
+        response = {"success": True, "data": formatted, "response_time_ms": elapsed}
         agent_cache.set(cache_key, response)
         stats.record("spoilage", success=True)
         return response
+
     except Exception as e:
-        print(f"Spoilage endpoint fallback: {e}")
+        elapsed = round((time.time() - start) * 1000)
+        print(f"Spoilage fallback ({elapsed}ms): {e}")
         stats.record("spoilage", success=False)
-        return {"success": True, "data": FALLBACK_RESPONSE, "fallback": True}
+
+        # Direct tool fallback: bypass agent, call tool directly
+        try:
+            from backend.tools.spoilage import predict_remaining_hours
+            direct = predict_remaining_hours(req.crop, req.storage_method, 35)
+            remaining = max(0, direct.get("remaining_hours", 42) - req.hours_since_harvest)
+            if remaining > 48:
+                color, urgency = "green", "safe"
+            elif remaining > 12:
+                color, urgency = "yellow", "attention"
+            else:
+                color, urgency = "red", "urgent"
+            return {
+                "success": True,
+                "data": {
+                    "type": "spoilage_timer",
+                    "remaining_hours": round(remaining, 1),
+                    "remaining_days": round(remaining / 24, 1),
+                    "color": color, "urgency": urgency,
+                    "has_weather_alert": False, "vibrate_phone": color == "red",
+                    "explanation_text": f"आपकी {req.crop} लगभग {round(remaining)} घंटे ताज़ा रहेगी।",
+                    "show_voice_button": True,
+                },
+                "fallback": True, "response_time_ms": elapsed,
+            }
+        except Exception:
+            return {
+                "success": True, "data": FALLBACK_DATA,
+                "fallback": True, "response_time_ms": elapsed,
+            }

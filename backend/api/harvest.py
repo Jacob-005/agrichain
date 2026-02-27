@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -9,15 +10,17 @@ from backend.config.stats import stats
 
 router = APIRouter(prefix="/harvest", tags=["harvest"])
 
-FALLBACK_RESPONSE = {
-    "score": 78,
+FALLBACK_DATA = {
+    "type": "harvest_score",
+    "score": 75,
     "color": "yellow",
-    "recommendation": "Wait 2-3 days",
-    "explanation": (
-        "Nagpur mandi has excess supply today. Prices will rise "
-        "by ₹2/kg on Friday. Wait for better returns."
+    "action": "wait",
+    "explanation_text": (
+        "मौसम और बाज़ार की स्थिति के आधार पर, 1-2 दिन इंतज़ार करने "
+        "की सलाह है। नागपुर मंडी में आपूर्ति अधिक है, शुक्रवार तक "
+        "कीमतें ₹2/किलो बढ़ सकती हैं।"
     ),
-    "breakdown": {"weather": 25, "market": 28, "readiness": 25},
+    "show_voice_button": True,
 }
 
 
@@ -32,13 +35,17 @@ class HarvestScoreRequest(BaseModel):
 
 @router.post("/score")
 async def harvest_score(req: HarvestScoreRequest, db: Session = Depends(get_db)):
-    """Calculate harvest score using AI agent (cached)."""
+    """Calculate harvest score using AI agent (cached, timed, with fallback)."""
+    start = time.time()
+
     # Check cache
     cache_key = agent_cache.make_key("harvest", req.crop, req.lat, req.soil_type)
     cached = agent_cache.get(cache_key)
     if cached:
         stats.record("harvest", success=True, cached=True)
+        elapsed = round((time.time() - start) * 1000)
         cached["cached"] = True
+        cached["response_time_ms"] = elapsed
         return cached
 
     try:
@@ -55,23 +62,30 @@ async def harvest_score(req: HarvestScoreRequest, db: Session = Depends(get_db))
         )
         formatted = format_harvest_response(result["explanation"], req.model_dump())
 
-        # Log advice
         try:
-            entry = AdviceHistory(
+            db.add(AdviceHistory(
                 id=generate_uuid(), user_id="demo-user",
                 type="harvest", recommendation=result["explanation"][:500],
                 savings_rupees=500,
-            )
-            db.add(entry)
+            ))
             db.commit()
         except Exception:
             db.rollback()
 
-        response = {"success": True, "data": formatted}
+        elapsed = round((time.time() - start) * 1000)
+        if elapsed > 10000:
+            print(f"⚠️ Harvest slow: {elapsed}ms")
+
+        response = {"success": True, "data": formatted, "response_time_ms": elapsed}
         agent_cache.set(cache_key, response)
         stats.record("harvest", success=True)
         return response
+
     except Exception as e:
-        print(f"Harvest endpoint fallback: {e}")
+        elapsed = round((time.time() - start) * 1000)
+        print(f"Harvest fallback ({elapsed}ms): {e}")
         stats.record("harvest", success=False)
-        return {"success": True, "data": FALLBACK_RESPONSE, "fallback": True}
+        return {
+            "success": True, "data": FALLBACK_DATA,
+            "fallback": True, "response_time_ms": elapsed,
+        }

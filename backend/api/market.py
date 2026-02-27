@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -9,16 +10,20 @@ from backend.config.stats import stats
 
 router = APIRouter(prefix="/market", tags=["market"])
 
-FALLBACK_RESPONSE = {
-    "mandis": [
-        {
-            "rank": 1, "name": "Kalamna Mandi, Nagpur",
-            "price_per_kg": 22.0, "distance_km": 12.5,
-            "fuel_cost": 85.0, "spoilage_loss": 30.0,
-            "pocket_cash": 17485.0, "risk_level": "low",
-        }
-    ],
-    "overall_recommendation": "Sell at Kalamna Mandi, Nagpur for best net returns.",
+FALLBACK_DATA = {
+    "type": "market_comparison",
+    "explanation_text": (
+        "📊 मंडी तुलना:\n\n"
+        "1️⃣ कलामना मंडी, नागपुर — ₹22/किलो, दूरी 12 किमी\n"
+        "   ईंधन: ₹85 | खराबी: ₹30 | 💰 पॉकेट कैश: ₹17,485\n\n"
+        "2️⃣ पुलगांव मंडी — ₹25/किलो, दूरी 68 किमी\n"
+        "   ईंधन: ₹320 | खराबी: ₹180 | 💰 पॉकेट कैश: ₹19,500\n\n"
+        "3️⃣ हिंगणघाट मंडी — ₹28/किलो, दूरी 95 किमी\n"
+        "   ईंधन: ₹480 | खराबी: ₹350 | 💰 पॉकेट कैश: ₹21,570\n\n"
+        "✅ कलामना मंडी सबसे नज़दीक है — कम ईंधन, कम खराबी।"
+    ),
+    "crop": "tomato",
+    "show_voice_button": True,
 }
 
 
@@ -34,12 +39,16 @@ class MarketCompareRequest(BaseModel):
 
 @router.post("/compare")
 async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db)):
-    """Compare mandis using AI agent (cached)."""
+    """Compare mandis using AI agent (cached, timed, with fallback)."""
+    start = time.time()
+
     cache_key = agent_cache.make_key("market", req.crop, req.volume_kg, req.lat)
     cached = agent_cache.get(cache_key)
     if cached:
         stats.record("market", success=True, cached=True)
+        elapsed = round((time.time() - start) * 1000)
         cached["cached"] = True
+        cached["response_time_ms"] = elapsed
         return cached
 
     try:
@@ -56,21 +65,30 @@ async def market_compare(req: MarketCompareRequest, db: Session = Depends(get_db
         formatted = format_market_response(result["explanation"], req.model_dump())
 
         try:
-            entry = AdviceHistory(
+            db.add(AdviceHistory(
                 id=generate_uuid(), user_id="demo-user",
                 type="market", recommendation=result["explanation"][:500],
                 savings_rupees=800,
-            )
-            db.add(entry)
+            ))
             db.commit()
         except Exception:
             db.rollback()
 
-        response = {"success": True, "data": formatted}
+        elapsed = round((time.time() - start) * 1000)
+        if elapsed > 10000:
+            print(f"⚠️ Market slow: {elapsed}ms")
+
+        response = {"success": True, "data": formatted, "response_time_ms": elapsed}
         agent_cache.set(cache_key, response)
         stats.record("market", success=True)
         return response
+
     except Exception as e:
-        print(f"Market endpoint fallback: {e}")
+        elapsed = round((time.time() - start) * 1000)
+        print(f"Market fallback ({elapsed}ms): {e}")
         stats.record("market", success=False)
-        return {"success": True, "data": FALLBACK_RESPONSE, "fallback": True}
+        fallback = {**FALLBACK_DATA, "volume_kg": req.volume_kg, "crop": req.crop}
+        return {
+            "success": True, "data": fallback,
+            "fallback": True, "response_time_ms": elapsed,
+        }

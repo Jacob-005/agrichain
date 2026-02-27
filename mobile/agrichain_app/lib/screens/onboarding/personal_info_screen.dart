@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
+import '../../app/app_strings.dart';
 import '../../app/theme.dart';
 
 class PersonalInfoScreen extends ConsumerStatefulWidget {
@@ -121,6 +122,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = ref.watch(userStateProvider).language;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -159,17 +161,17 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Tell Us About Yourself',
-                      style: TextStyle(
+                    Text(
+                      t('tell_us', lang),
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'This helps us personalize your experience',
-                      style: TextStyle(
+                    Text(
+                      t('personal_subtitle', lang),
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AgriChainTheme.greyText,
                       ),
@@ -178,9 +180,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                     const SizedBox(height: 28),
 
                     // ── Name field ──
-                    const Text(
-                      'Your Name',
-                      style: TextStyle(
+                    Text(
+                      t('your_name', lang),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -190,8 +192,8 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       controller: _nameController,
                       style: const TextStyle(fontSize: 18),
                       onChanged: (_) => setState(() {}),
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your name',
+                      decoration: InputDecoration(
+                        hintText: t('enter_name', lang),
                         prefixIcon: Icon(
                           Icons.person,
                           color: AgriChainTheme.primaryGreen,
@@ -202,9 +204,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                     const SizedBox(height: 28),
 
                     // ── Age picker ──
-                    const Text(
-                      'Your Age',
-                      style: TextStyle(
+                    Text(
+                      '${t('age', lang)} — $_age ${t('years', lang)}',
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -235,7 +237,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                               min: 18,
                               max: 80,
                               divisions: 62,
-                              label: '$_age years',
+                              label: '$_age ${t('years', lang)}',
                               onChanged: (v) =>
                                   setState(() => _age = v.round()),
                             ),
@@ -267,9 +269,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                     const SizedBox(height: 28),
 
                     // ── Location ──
-                    const Text(
-                      'Your Location',
-                      style: TextStyle(
+                    Text(
+                      t('location', lang),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -286,7 +288,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                         label: Text(
                           _gpsDetected
                               ? '📍 $_detectedLocation'
-                              : '📍 Use GPS Location',
+                              : t('use_gps', lang),
                           style: const TextStyle(fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -306,9 +308,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                         onPressed: () =>
                             setState(() => _manualMode = !_manualMode),
                         icon: const Icon(Icons.edit_location_alt, size: 24),
-                        label: const Text(
-                          '✏️ Enter Manually',
-                          style: TextStyle(fontSize: 16),
+                        label: Text(
+                          '✏️ ${t('select_manually', lang)}',
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
                     ),
@@ -320,8 +322,8 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       // State dropdown
                       DropdownButtonFormField<String>(
                         value: _selectedState,
-                        decoration: const InputDecoration(
-                          labelText: 'State',
+                        decoration: InputDecoration(
+                          labelText: t('select_state', lang),
                           prefixIcon: Icon(
                             Icons.flag,
                             color: AgriChainTheme.primaryGreen,
@@ -346,8 +348,8 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       if (_selectedState != null)
                         DropdownButtonFormField<String>(
                               value: _selectedDistrict,
-                              decoration: const InputDecoration(
-                                labelText: 'District',
+                              decoration: InputDecoration(
+                                labelText: t('select_district', lang),
                                 prefixIcon: Icon(
                                   Icons.map,
                                   color: AgriChainTheme.primaryGreen,
@@ -396,7 +398,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                   child: ElevatedButton.icon(
                     onPressed: _isFormValid ? _submitProfile : null,
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Next →', style: TextStyle(fontSize: 18)),
+                    label: Text(
+                      t('next', lang),
+                      style: const TextStyle(fontSize: 18),
+                    ),
                   ),
                 ),
               ),

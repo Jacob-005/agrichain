@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
+import '../../app/app_strings.dart';
 import '../../app/theme.dart';
 
 class SoilSelectionScreen extends ConsumerStatefulWidget {
@@ -85,6 +86,7 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
       );
     }
 
+    final lang = ref.watch(userStateProvider).language;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -106,14 +108,17 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                     constraints: const BoxConstraints(),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'What\'s Your Soil Type?',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                  Text(
+                    t('select_soil', lang),
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'आपकी मिट्टी कैसी है?',
-                    style: TextStyle(
+                  Text(
+                    t('soil_subtitle', lang),
+                    style: const TextStyle(
                       fontSize: 18,
                       color: AgriChainTheme.greyText,
                     ),
@@ -323,9 +328,9 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                             ),
                           )
                         : const Icon(Icons.rocket_launch, size: 22),
-                    label: const Text(
-                      'Start AgriChain →',
-                      style: TextStyle(fontSize: 18),
+                    label: Text(
+                      t('finish', lang),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
                 ),

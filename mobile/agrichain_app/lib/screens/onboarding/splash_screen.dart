@@ -25,8 +25,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     bool isComplete = false;
 
     try {
-      // ── RESET: Force onboarding to run fresh ──
-      await storage.saveOnboardingComplete(false);
+      // ── RESET: Clear ALL stored data so onboarding starts fresh ──
+      // Remove this block once testing is complete to let data persist.
+      await storage.clearAll();
 
       isComplete = await storage.isOnboardingComplete();
 

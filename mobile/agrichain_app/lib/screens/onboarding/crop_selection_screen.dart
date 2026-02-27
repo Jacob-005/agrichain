@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
+import '../../app/app_strings.dart';
 import '../../app/theme.dart';
 
 class CropSelectionScreen extends ConsumerStatefulWidget {
@@ -106,6 +107,7 @@ class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
       );
     }
 
+    final lang = ref.watch(userStateProvider).language;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -128,14 +130,17 @@ class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
                     constraints: const BoxConstraints(),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'What Do You Grow?',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                  Text(
+                    t('select_crops', lang),
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'आप क्या उगाते हैं?',
-                    style: TextStyle(
+                  Text(
+                    t('crop_subtitle', lang),
+                    style: const TextStyle(
                       fontSize: 18,
                       color: AgriChainTheme.greyText,
                     ),
@@ -326,7 +331,7 @@ class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            '${_selected.length} selected',
+                            '${_selected.length} ${t('selected', lang)}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -371,9 +376,9 @@ class _CropSelectionScreenState extends ConsumerState<CropSelectionScreen>
                                   context.go('/soil-selection');
                                 },
                           icon: const Icon(Icons.arrow_forward, size: 20),
-                          label: const Text(
-                            'Next →',
-                            style: TextStyle(fontSize: 17),
+                          label: Text(
+                            t('next', lang),
+                            style: const TextStyle(fontSize: 17),
                           ),
                         ),
                       ),

@@ -13,6 +13,9 @@ import '../screens/preservation/preservation_screen.dart';
 import '../screens/shared/profile_screen.dart';
 import '../screens/shared/notification_screen.dart';
 import '../screens/shared/advice_history_screen.dart';
+import '../screens/shared/weather_screen.dart';
+import '../screens/shared/soil_screen.dart';
+import '../screens/shared/nearest_dc_screen.dart';
 import '../widgets/agri_header.dart';
 import '../widgets/agri_bottom_nav.dart';
 
@@ -25,18 +28,12 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
   routes: [
     // ─── Onboarding (no bottom nav) ────────────────────────────────────
-    GoRoute(
-      path: '/splash',
-      builder: (context, state) => const SplashScreen(),
-    ),
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(
       path: '/language',
       builder: (context, state) => const LanguageScreen(),
     ),
-    GoRoute(
-      path: '/otp',
-      builder: (context, state) => const OtpScreen(),
-    ),
+    GoRoute(path: '/otp', builder: (context, state) => const OtpScreen()),
     GoRoute(
       path: '/personal-info',
       builder: (context, state) => const PersonalInfoScreen(),
@@ -59,27 +56,23 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: HomeScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: HomeScreen()),
         ),
         GoRoute(
           path: '/market',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: MarketScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: MarketScreen()),
         ),
         GoRoute(
           path: '/life',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: LifeScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: LifeScreen()),
         ),
         GoRoute(
           path: '/preservation',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: PreservationScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: PreservationScreen()),
         ),
       ],
     ),
@@ -99,6 +92,21 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/advice-history',
       builder: (context, state) => const AdviceHistoryScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/weather',
+      builder: (context, state) => const WeatherScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/soil',
+      builder: (context, state) => const SoilScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/nearest-dc',
+      builder: (context, state) => const NearestDCScreen(),
     ),
   ],
 );

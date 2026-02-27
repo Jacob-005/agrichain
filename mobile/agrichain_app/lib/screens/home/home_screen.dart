@@ -16,23 +16,22 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  String _selectedCrop = 'tomato';
+  String _selectedCrop = '';
   HarvestScoreModel? _scoreData;
   bool _loading = true;
   String? _error;
   bool _whyExpanded = false;
 
-  final List<Map<String, String>> _crops = const [
-    {'id': 'tomato', 'name': 'Tomato', 'icon': '🍅'},
-    {'id': 'onion', 'name': 'Onion', 'icon': '🧅'},
-    {'id': 'potato', 'name': 'Potato', 'icon': '🥔'},
-    {'id': 'wheat', 'name': 'Wheat', 'icon': '🌾'},
-    {'id': 'rice', 'name': 'Rice', 'icon': '🍚'},
-  ];
-
   @override
   void initState() {
     super.initState();
+    // Set default from provider
+    final crops = ref.read(selectedCropsProvider);
+    if (crops.isNotEmpty) {
+      _selectedCrop = crops.first['id'] ?? 'tomato';
+    } else {
+      _selectedCrop = 'tomato';
+    }
     _loadScore();
   }
 
@@ -72,6 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final crops = ref.watch(selectedCropsProvider);
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -88,10 +88,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             height: 44,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _crops.length,
+              itemCount: crops.length,
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (context, i) {
-                final crop = _crops[i];
+                final crop = crops[i];
                 final isSelected = _selectedCrop == crop['id'];
                 return GestureDetector(
                   onTap: () => _selectCrop(crop['id']!),
@@ -336,9 +336,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildServicesGrid(BuildContext context) {
     final services = [
-      {'icon': '🌦', 'label': 'Weather', 'route': ''},
-      {'icon': '🌱', 'label': 'Soil', 'route': ''},
-      {'icon': '📍', 'label': 'Nearest DC', 'route': ''},
+      {'icon': '🌦', 'label': 'Weather', 'route': '/weather'},
+      {'icon': '🌱', 'label': 'Soil', 'route': '/soil'},
+      {'icon': '📍', 'label': 'Nearest DC', 'route': '/nearest-dc'},
       {'icon': '💰', 'label': 'Mandi Prices', 'route': '/market'},
       {'icon': '🩺', 'label': 'Crop Doctor', 'route': ''},
       {'icon': '📹', 'label': 'Video Call', 'route': ''},
@@ -366,7 +366,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onTap: () {
             final route = s['route']!;
             if (route.isNotEmpty) {
-              context.go(route);
+              // Use push for standalone screens, go for shell tabs
+              if (route == '/market' ||
+                  route == '/life' ||
+                  route == '/preservation') {
+                context.go(route);
+              } else {
+                context.push(route);
+              }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

@@ -22,7 +22,38 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _checkOnboardingAndNavigate() async {
     final storage = ref.read(storageServiceProvider);
-    final isComplete = await storage.isOnboardingComplete();
+    bool isComplete = false;
+
+    try {
+      // ── RESET: Force onboarding to run fresh ──
+      await storage.saveOnboardingComplete(false);
+
+      isComplete = await storage.isOnboardingComplete();
+
+      // Restore persisted data into providers
+      if (isComplete) {
+        final profile = await storage.getUserProfile();
+        if (profile != null) {
+          ref
+              .read(userStateProvider.notifier)
+              .setProfile(name: profile['name'], phone: profile['phone']);
+          ref
+              .read(locationProvider.notifier)
+              .update(profile['district'], profile['lat'], profile['lng']);
+        }
+        final crops = await storage.getSelectedCrops();
+        if (crops != null && crops.isNotEmpty) {
+          ref.read(selectedCropsProvider.notifier).setCrops(crops);
+        }
+        final soil = await storage.getSoilType();
+        if (soil != null) {
+          ref.read(soilTypeProvider.notifier).state = soil;
+        }
+      }
+    } catch (e) {
+      // If restore fails, just proceed with defaults
+      debugPrint('Error restoring onboarding data: $e');
+    }
 
     await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
@@ -47,18 +78,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           children: [
             // ── App icon ──
             Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AgriChainTheme.primaryGreen.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.eco,
-                size: 44,
-                color: AgriChainTheme.primaryGreen,
-              ),
-            )
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AgriChainTheme.primaryGreen.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.eco,
+                    size: 44,
+                    color: AgriChainTheme.primaryGreen,
+                  ),
+                )
                 .animate()
                 .scale(
                   begin: const Offset(0.5, 0.5),
@@ -97,8 +128,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               borderColor: const Color(0xFFE0E0E0),
               width: barWidth,
               delay: const Duration(milliseconds: 600),
-              child: const Icon(Icons.brightness_7,
-                  size: 16, color: Color(0xFF000080)),
+              child: const Icon(
+                Icons.brightness_7,
+                size: 16,
+                color: Color(0xFF000080),
+              ),
             ),
             const SizedBox(height: 6),
             // Green stripe
@@ -113,10 +147,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             // ── Subtitle ──
             const Text(
               '🌾 Farm to Market Intelligence',
-              style: TextStyle(
-                fontSize: 16,
-                color: AgriChainTheme.greyText,
-              ),
+              style: TextStyle(fontSize: 16, color: AgriChainTheme.greyText),
             ).animate().fadeIn(delay: 1200.ms, duration: 400.ms),
 
             const SizedBox(height: 48),
@@ -156,17 +187,17 @@ class _AnimatedStripe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 18,
-      width: width,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(9),
-        border: borderColor != null
-            ? Border.all(color: borderColor!, width: 1)
-            : null,
-      ),
-      child: child != null ? Center(child: child) : null,
-    )
+          height: 18,
+          width: width,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(9),
+            border: borderColor != null
+                ? Border.all(color: borderColor!, width: 1)
+                : null,
+          ),
+          child: child != null ? Center(child: child) : null,
+        )
         .animate()
         .scaleX(
           begin: 0,

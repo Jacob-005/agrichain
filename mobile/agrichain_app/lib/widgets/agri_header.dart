@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../app/theme.dart';
+import '../app/providers.dart';
+import '../widgets/location_picker.dart';
 
-class AgriHeader extends StatelessWidget implements PreferredSizeWidget {
+class AgriHeader extends ConsumerWidget implements PreferredSizeWidget {
   const AgriHeader({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final location = ref.watch(locationProvider);
+
     return SafeArea(
       bottom: false,
       child: Container(
@@ -28,25 +33,42 @@ class AgriHeader extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Location label
+            // Location label — tappable
             GestureDetector(
               onTap: () {
-                // TODO: open location picker
+                LocationPicker.show(
+                  context,
+                  onLocationSelected: (district, lat, lng) {
+                    ref
+                        .read(locationProvider.notifier)
+                        .update(district, lat, lng);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('📍 Location changed to $district'),
+                        backgroundColor: AgriChainTheme.primaryGreen,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                );
               },
-              child: const Row(
+              child: Row(
                 children: [
-                  Text('📍', style: TextStyle(fontSize: 20)),
-                  SizedBox(width: 4),
+                  const Text('📍', style: TextStyle(fontSize: 20)),
+                  const SizedBox(width: 4),
                   Text(
-                    'Nagpur',
-                    style: TextStyle(
+                    location.district,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AgriChainTheme.darkText,
                     ),
                   ),
-                  Icon(Icons.keyboard_arrow_down,
-                      size: 20, color: AgriChainTheme.greyText),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: AgriChainTheme.greyText,
+                  ),
                 ],
               ),
             ),
@@ -54,10 +76,12 @@ class AgriHeader extends StatelessWidget implements PreferredSizeWidget {
             // Right-side icons
             Row(
               children: [
-                // Advice history / ROI
+                // Advice history
                 IconButton(
-                  icon: const Icon(Icons.history,
-                      color: AgriChainTheme.primaryGreen),
+                  icon: const Icon(
+                    Icons.history,
+                    color: AgriChainTheme.primaryGreen,
+                  ),
                   tooltip: 'Advice History',
                   onPressed: () => context.push('/advice-history'),
                 ),
@@ -65,8 +89,10 @@ class AgriHeader extends StatelessWidget implements PreferredSizeWidget {
                 Stack(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.notifications_outlined,
-                          color: AgriChainTheme.primaryGreen),
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                        color: AgriChainTheme.primaryGreen,
+                      ),
                       tooltip: 'Notifications',
                       onPressed: () => context.push('/notifications'),
                     ),
@@ -86,8 +112,10 @@ class AgriHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 // Profile
                 IconButton(
-                  icon: const Icon(Icons.account_circle_outlined,
-                      color: AgriChainTheme.primaryGreen),
+                  icon: const Icon(
+                    Icons.account_circle_outlined,
+                    color: AgriChainTheme.primaryGreen,
+                  ),
                   tooltip: 'Profile',
                   onPressed: () => context.push('/profile'),
                 ),

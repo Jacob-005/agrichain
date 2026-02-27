@@ -20,7 +20,7 @@ class ApiService {
 
   ApiService({
     this.useMock = false,
-    this.baseUrl = 'http://10.17.25.144:8000/api/v1',
+    this.baseUrl = 'http://localhost:8001/api/v1',
   });
 
   void setAuthToken(String token) => _authToken = token;

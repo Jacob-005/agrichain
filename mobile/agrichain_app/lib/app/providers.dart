@@ -4,12 +4,16 @@ import '../services/storage_service.dart';
 
 // ── API Configuration ─────────────────────────────────────────────────────
 // Toggle this to switch between mock and real API
-const bool useMockApi = false;
+// true = mock data for backend-dependent features (auth, crops, harvest, market, etc.)
+// External APIs (OpenWeatherMap, Soil screen, Nearest DC) are NOT affected by this flag.
+const bool useMockApi = true;
 
-// Change this to J's IP address (from ipconfig on J's laptop)
-// Use 10.0.2.2 for Android emulator → localhost
-const String backendIp = '10.17.25.144';
-const String apiBaseUrl = 'http://$backendIp:8000/api/v1';
+// Using ADB reverse tunnel: phone:8001 → laptop:8000
+// Run: adb reverse tcp:8001 tcp:8000
+// For Wi-Fi (same network): use your laptop IP instead of localhost
+const String backendIp = 'localhost';
+const int backendPort = 8001;
+const String apiBaseUrl = 'http://$backendIp:$backendPort/api/v1';
 
 // ---------------------------------------------------------------------------
 // Service providers
@@ -101,3 +105,68 @@ final appStateProvider = StateNotifierProvider<AppStateNotifier, AppState>((
 ) {
   return AppStateNotifier();
 });
+
+// ---------------------------------------------------------------------------
+// Location state
+// ---------------------------------------------------------------------------
+class LocationState {
+  final String district;
+  final double lat;
+  final double lng;
+
+  const LocationState({
+    this.district = 'Nagpur',
+    this.lat = 21.1458,
+    this.lng = 79.0882,
+  });
+
+  LocationState copyWith({String? district, double? lat, double? lng}) {
+    return LocationState(
+      district: district ?? this.district,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+    );
+  }
+}
+
+class LocationNotifier extends StateNotifier<LocationState> {
+  LocationNotifier() : super(const LocationState());
+
+  void update(String district, double lat, double lng) {
+    state = state.copyWith(district: district, lat: lat, lng: lng);
+  }
+}
+
+final locationProvider = StateNotifierProvider<LocationNotifier, LocationState>(
+  (ref) {
+    return LocationNotifier();
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Selected crops state
+// ---------------------------------------------------------------------------
+class SelectedCropsNotifier extends StateNotifier<List<Map<String, String>>> {
+  SelectedCropsNotifier()
+    : super(const [
+        {'id': 'tomato', 'name': 'Tomato', 'icon': '🍅'},
+        {'id': 'onion', 'name': 'Onion', 'icon': '🧅'},
+        {'id': 'potato', 'name': 'Potato', 'icon': '🥔'},
+        {'id': 'wheat', 'name': 'Wheat', 'icon': '🌾'},
+        {'id': 'rice', 'name': 'Rice', 'icon': '🍚'},
+      ]);
+
+  void setCrops(List<Map<String, String>> crops) => state = crops;
+}
+
+final selectedCropsProvider =
+    StateNotifierProvider<SelectedCropsNotifier, List<Map<String, String>>>((
+      ref,
+    ) {
+      return SelectedCropsNotifier();
+    });
+
+// ---------------------------------------------------------------------------
+// Soil type state
+// ---------------------------------------------------------------------------
+final soilTypeProvider = StateProvider<String>((ref) => 'black_cotton');

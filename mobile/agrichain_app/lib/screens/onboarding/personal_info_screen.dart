@@ -45,8 +45,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('📍 Location detected: Nagpur, Maharashtra',
-            style: TextStyle(fontSize: 16)),
+        content: const Text(
+          '📍 Location detected: Nagpur, Maharashtra',
+          style: TextStyle(fontSize: 16),
+        ),
         backgroundColor: AgriChainTheme.primaryGreen,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -54,13 +56,61 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  void _submitProfile() {
-    ref.read(userStateProvider.notifier).setProfile(
-          name: _nameController.text.trim(),
-          phone:
-              ref.read(userStateProvider).phone ?? '9876543210',
-        );
-    context.go('/crop-selection');
+  void _submitProfile() async {
+    final name = _nameController.text.trim();
+    final phone = ref.read(userStateProvider).phone ?? '9876543210';
+    final district = _selectedDistrict ?? 'Nagpur';
+
+    ref.read(userStateProvider.notifier).setProfile(name: name, phone: phone);
+
+    // Persist to storage
+    final storage = ref.read(storageServiceProvider);
+
+    // Find lat/lng for the selected district
+    double lat = 21.1458;
+    double lng = 79.0882;
+    for (final state in _stateDistricts.entries) {
+      if (state.value.contains(district)) {
+        // Use LocationPicker districts for coordinates
+        break;
+      }
+    }
+    // Simple lookup for known districts
+    const districtCoords = {
+      'Nagpur': [21.1458, 79.0882],
+      'Amravati': [20.9374, 77.7796],
+      'Wardha': [20.7453, 78.6022],
+      'Nashik': [19.9975, 73.7898],
+      'Pune': [18.5204, 73.8567],
+      'Indore': [22.7196, 75.8577],
+      'Bhopal': [23.2599, 77.4126],
+      'Dewas': [22.9676, 76.0534],
+      'Lucknow': [26.8467, 80.9462],
+      'Varanasi': [25.3176, 82.9739],
+      'Jaipur': [26.9124, 75.7873],
+      'Jodhpur': [26.2389, 73.0243],
+      'Udaipur': [24.5854, 73.7125],
+      'Bangalore': [12.9716, 77.5946],
+      'Mysore': [12.2958, 76.6394],
+      'Hubli': [15.3647, 75.1240],
+    };
+    if (districtCoords.containsKey(district)) {
+      lat = districtCoords[district]![0];
+      lng = districtCoords[district]![1];
+    }
+
+    await storage.saveUserProfile(
+      name: name,
+      phone: phone,
+      district: district,
+      lat: lat,
+      lng: lng,
+    );
+
+    // Update location provider
+    ref.read(locationProvider.notifier).update(district, lat, lng);
+
+    if (mounted) context.go('/crop-selection');
   }
 
   @override
@@ -84,8 +134,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                   children: [
                     const SizedBox(height: 24),
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new,
-                          color: AgriChainTheme.darkText),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: AgriChainTheme.darkText,
+                      ),
                       onPressed: () => context.go('/otp'),
                     ),
                     const SizedBox(height: 12),
@@ -95,28 +147,44 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color:
-                            AgriChainTheme.primaryGreen.withValues(alpha: 0.1),
+                        color: AgriChainTheme.primaryGreen.withValues(
+                          alpha: 0.1,
+                        ),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.person_outline,
-                          size: 28, color: AgriChainTheme.primaryGreen),
+                      child: const Icon(
+                        Icons.person_outline,
+                        size: 28,
+                        color: AgriChainTheme.primaryGreen,
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    const Text('Tell Us About Yourself',
-                        style: TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.w700)),
+                    const Text(
+                      'Tell Us About Yourself',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    const Text('This helps us personalize your experience',
-                        style: TextStyle(
-                            fontSize: 16, color: AgriChainTheme.greyText)),
+                    const Text(
+                      'This helps us personalize your experience',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AgriChainTheme.greyText,
+                      ),
+                    ),
 
                     const SizedBox(height: 28),
 
                     // ── Name field ──
-                    const Text('Your Name',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
+                    const Text(
+                      'Your Name',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _nameController,
@@ -124,22 +192,31 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       onChanged: (_) => setState(() {}),
                       decoration: const InputDecoration(
                         hintText: 'Enter your name',
-                        prefixIcon: Icon(Icons.person,
-                            color: AgriChainTheme.primaryGreen),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: AgriChainTheme.primaryGreen,
+                        ),
                       ),
                     ),
 
                     const SizedBox(height: 28),
 
                     // ── Age picker ──
-                    const Text('Your Age',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
+                    const Text(
+                      'Your Age',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.agriculture,
-                            color: AgriChainTheme.primaryGreen, size: 28),
+                        const Icon(
+                          Icons.agriculture,
+                          color: AgriChainTheme.primaryGreen,
+                          size: 28,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: SliderTheme(
@@ -150,8 +227,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                               thumbColor: AgriChainTheme.primaryGreen,
                               overlayColor: AgriChainTheme.primaryGreen
                                   .withValues(alpha: 0.1),
-                              valueIndicatorColor:
-                                  AgriChainTheme.primaryGreen,
+                              valueIndicatorColor: AgriChainTheme.primaryGreen,
                               showValueIndicator: ShowValueIndicator.always,
                             ),
                             child: Slider(
@@ -167,18 +243,22 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 8),
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: AgriChainTheme.primaryGreen
-                                .withValues(alpha: 0.1),
+                            color: AgriChainTheme.primaryGreen.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
                             '$_age',
                             style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: AgriChainTheme.primaryGreen),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: AgriChainTheme.primaryGreen,
+                            ),
                           ),
                         ),
                       ],
@@ -187,9 +267,13 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                     const SizedBox(height: 28),
 
                     // ── Location ──
-                    const Text('Your Location',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
+                    const Text(
+                      'Your Location',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 12),
 
                     // GPS button
@@ -222,8 +306,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                         onPressed: () =>
                             setState(() => _manualMode = !_manualMode),
                         icon: const Icon(Icons.edit_location_alt, size: 24),
-                        label: const Text('✏️ Enter Manually',
-                            style: TextStyle(fontSize: 16)),
+                        label: const Text(
+                          '✏️ Enter Manually',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
 
@@ -236,12 +322,15 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                         value: _selectedState,
                         decoration: const InputDecoration(
                           labelText: 'State',
-                          prefixIcon: Icon(Icons.flag,
-                              color: AgriChainTheme.primaryGreen),
+                          prefixIcon: Icon(
+                            Icons.flag,
+                            color: AgriChainTheme.primaryGreen,
+                          ),
                         ),
                         items: _stateDistricts.keys
-                            .map((s) => DropdownMenuItem(
-                                value: s, child: Text(s)))
+                            .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)),
+                            )
                             .toList(),
                         onChanged: (val) {
                           setState(() {
@@ -256,19 +345,25 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       // District dropdown
                       if (_selectedState != null)
                         DropdownButtonFormField<String>(
-                          value: _selectedDistrict,
-                          decoration: const InputDecoration(
-                            labelText: 'District',
-                            prefixIcon: Icon(Icons.map,
-                                color: AgriChainTheme.primaryGreen),
-                          ),
-                          items: (_stateDistricts[_selectedState] ?? [])
-                              .map((d) => DropdownMenuItem(
-                                  value: d, child: Text(d)))
-                              .toList(),
-                          onChanged: (val) =>
-                              setState(() => _selectedDistrict = val),
-                        )
+                              value: _selectedDistrict,
+                              decoration: const InputDecoration(
+                                labelText: 'District',
+                                prefixIcon: Icon(
+                                  Icons.map,
+                                  color: AgriChainTheme.primaryGreen,
+                                ),
+                              ),
+                              items: (_stateDistricts[_selectedState] ?? [])
+                                  .map(
+                                    (d) => DropdownMenuItem(
+                                      value: d,
+                                      child: Text(d),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (val) =>
+                                  setState(() => _selectedDistrict = val),
+                            )
                             .animate()
                             .fadeIn(duration: 200.ms)
                             .slideY(begin: 0.1, end: 0, duration: 200.ms),
@@ -287,9 +382,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, -2)),
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, -2),
+                  ),
                 ],
               ),
               child: SafeArea(
@@ -300,8 +396,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                   child: ElevatedButton.icon(
                     onPressed: _isFormValid ? _submitProfile : null,
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Next →',
-                        style: TextStyle(fontSize: 18)),
+                    label: const Text('Next →', style: TextStyle(fontSize: 18)),
                   ),
                 ),
               ),

@@ -13,8 +13,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _editing = false;
   final _nameController = TextEditingController(text: 'Ramesh Patil');
   double _age = 42;
-  String _location = 'Nagpur, Maharashtra';
-  String _soilType = 'Black (काली)';
+  final String _location = 'Nagpur, Maharashtra';
+  final String _soilType = 'Black (काली)';
   String _language = 'Hindi';
   final List<String> _crops = ['Tomato', 'Onion', 'Wheat'];
 

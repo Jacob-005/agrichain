@@ -30,11 +30,25 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
     final result = await api.getSoilTypes();
 
     if (result.success && result.data != null) {
+      final raw = result.data!;
+      // Handle multiple response shapes:
+      // Mock:  {soil_types: [...]}
+      // Real:  {success: true, data: [...]}
+      List<dynamic> soilList;
+      if (raw['soil_types'] is List) {
+        soilList = raw['soil_types'];
+      } else if (raw['data'] is List) {
+        soilList = raw['data'];
+      } else {
+        soilList = [];
+      }
+
       setState(() {
-        _soilTypes =
-            List<Map<String, dynamic>>.from(result.data!['soil_types']);
+        _soilTypes = List<Map<String, dynamic>>.from(soilList);
         _loading = false;
       });
+    } else {
+      setState(() => _loading = false);
     }
   }
 
@@ -48,6 +62,13 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
     setState(() => _submitting = true);
 
     final storage = ref.read(storageServiceProvider);
+
+    // Save selected soil type
+    if (_selectedId != null) {
+      await storage.saveSoilType(_selectedId!);
+      ref.read(soilTypeProvider.notifier).state = _selectedId!;
+    }
+
     await storage.saveOnboardingComplete(true);
 
     if (mounted) context.go('/home');
@@ -59,8 +80,8 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
       return const Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-            child: CircularProgressIndicator(
-                color: AgriChainTheme.primaryGreen)),
+          child: CircularProgressIndicator(color: AgriChainTheme.primaryGreen),
+        ),
       );
     }
 
@@ -76,8 +97,10 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new,
-                        color: AgriChainTheme.darkText),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AgriChainTheme.darkText,
+                    ),
                     onPressed: () => context.go('/crop-selection'),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -85,14 +108,15 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                   const SizedBox(height: 12),
                   const Text(
                     'What\'s Your Soil Type?',
-                    style:
-                        TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 2),
                   const Text(
                     'आपकी मिट्टी कैसी है?',
                     style: TextStyle(
-                        fontSize: 18, color: AgriChainTheme.greyText),
+                      fontSize: 18,
+                      color: AgriChainTheme.greyText,
+                    ),
                   ),
                 ],
               ),
@@ -103,8 +127,7 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 14,
                   crossAxisSpacing: 14,
@@ -115,140 +138,143 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                   final soil = _soilTypes[i];
                   final id = soil['id'] as String;
                   final isSelected = _selectedId == id;
-                  final soilColor =
-                      _hexToColor(soil['color_hex'] ?? '#795548');
-                  final suitableCrops =
-                      List<String>.from(soil['suitable_crops'] ?? []);
+                  final soilColor = _hexToColor(soil['color_hex'] ?? '#795548');
+                  final suitableCrops = List<String>.from(
+                    soil['suitable_crops'] ?? [],
+                  );
 
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedId = id),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AgriChainTheme.primaryGreen
-                                .withValues(alpha: 0.06)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: isSelected
-                              ? AgriChainTheme.primaryGreen
-                              : Colors.grey.shade300,
-                          width: isSelected ? 2.5 : 1,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: AgriChainTheme.primaryGreen
-                                      .withValues(alpha: 0.15),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                )
-                              ]
-                            : null,
-                      ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                                // Soil color circle
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: soilColor,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color:
-                                          soilColor.withValues(alpha: 0.3),
-                                      width: 3,
+                        onTap: () => setState(() => _selectedId = id),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AgriChainTheme.primaryGreen.withValues(
+                                    alpha: 0.06,
+                                  )
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AgriChainTheme.primaryGreen
+                                  : Colors.grey.shade300,
+                              width: isSelected ? 2.5 : 1,
+                            ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: AgriChainTheme.primaryGreen
+                                          .withValues(alpha: 0.15),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                // Name (Hindi + English)
-                                Text(
-                                  soil['name_hi'] ?? '',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                    color: isSelected
-                                        ? AgriChainTheme.primaryGreen
-                                        : AgriChainTheme.darkText,
-                                  ),
-                                ),
-                                Text(
-                                  soil['name'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: AgriChainTheme.greyText,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                // Description
-                                Text(
-                                  soil['description'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AgriChainTheme.greyText,
-                                    height: 1.3,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const Spacer(),
-                                // Suitable crops
-                                Wrap(
-                                  spacing: 4,
-                                  children: suitableCrops
-                                      .take(3)
-                                      .map((c) => Container(
-                                            padding:
-                                                const EdgeInsets.symmetric(
+                                  ]
+                                : null,
+                          ),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Soil color circle
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: soilColor,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: soilColor.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          width: 3,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    // Name (Hindi + English)
+                                    Text(
+                                      soil['name_hi'] ?? '',
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: isSelected
+                                            ? AgriChainTheme.primaryGreen
+                                            : AgriChainTheme.darkText,
+                                      ),
+                                    ),
+                                    Text(
+                                      soil['name'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: AgriChainTheme.greyText,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    // Description
+                                    Text(
+                                      soil['description'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AgriChainTheme.greyText,
+                                        height: 1.3,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    // Suitable crops
+                                    Wrap(
+                                      spacing: 4,
+                                      children: suitableCrops
+                                          .take(3)
+                                          .map(
+                                            (c) => Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                     horizontal: 6,
-                                                    vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: AgriChainTheme
-                                                  .primaryGreen
-                                                  .withValues(
-                                                      alpha: 0.08),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              c,
-                                              style: const TextStyle(
-                                                fontSize: 10,
+                                                    vertical: 2,
+                                                  ),
+                                              decoration: BoxDecoration(
                                                 color: AgriChainTheme
-                                                    .primaryGreen,
-                                                fontWeight: FontWeight.w500,
+                                                    .primaryGreen
+                                                    .withValues(alpha: 0.08),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                c,
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: AgriChainTheme
+                                                      .primaryGreen,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ))
-                                      .toList(),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          // Checkmark
-                          if (isSelected)
-                            const Positioned(
-                              top: 10,
-                              right: 10,
-                              child: Icon(
-                                Icons.check_circle,
-                                color: AgriChainTheme.primaryGreen,
-                                size: 24,
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  )
+                              // Checkmark
+                              if (isSelected)
+                                const Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: AgriChainTheme.primaryGreen,
+                                    size: 24,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      )
                       .animate()
                       .fadeIn(
                         delay: Duration(milliseconds: 80 * i),
@@ -272,9 +298,10 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, -2)),
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, -2),
+                  ),
                 ],
               ),
               child: SafeArea(
@@ -283,17 +310,23 @@ class _SoilSelectionScreenState extends ConsumerState<SoilSelectionScreen> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton.icon(
-                    onPressed:
-                        (_selectedId == null || _submitting) ? null : _finishOnboarding,
+                    onPressed: (_selectedId == null || _submitting)
+                        ? null
+                        : _finishOnboarding,
                     icon: _submitting
                         ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
                         : const Icon(Icons.rocket_launch, size: 22),
-                    label: const Text('Start AgriChain →',
-                        style: TextStyle(fontSize: 18)),
+                    label: const Text(
+                      'Start AgriChain →',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
                 ),
               ),
